@@ -1,5 +1,5 @@
-import classes from "./../product.module.css";
-import DeleteIcon from "./../../../icons/delete";
+import classes from "./../../styles/product.module.css";
+import DeleteIcon from "../../icons/delete";
 
 const Category = ({ category, deleteC }) => {
 

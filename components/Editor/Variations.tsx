@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
-import Edit from "../../../icons/edit";
-import Trash from "../../../icons/trash";
+import Edit from "./../../icons/edit";
+import Trash from "./../../icons/trash";
 import classes from "./variations.module.css";
 
 const Variation = ({ variation }) => {

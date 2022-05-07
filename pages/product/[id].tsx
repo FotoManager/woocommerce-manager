@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps, GetStaticPaths } from "next";
-import classes from "./product.module.css";
+import classes from "./../../styles/product.module.css";
 import { useRef, useState } from "react";
 import Add from "../../icons/add";
-import Category from "./Editor/Category";
-import ModalCategories from "./Editor/ModalCategories";
-import Variations from "./Editor/Variations";
+import Category from "../../components/Editor/Category";
+import ModalCategories from "../../components/Editor/ModalCategories";
+import Variations from "../../components/Editor/Variations";
 
 const Product = ({ product, validCategories }) => {
-  if (!product) return <p>Loading...</p>;
+  if (!product.found) return <p>Loading...</p>;
 
   const {
     id,
@@ -128,14 +128,14 @@ export default Product;
 export const getStaticProps: GetStaticProps = async (context) => {
   const { id } = context.params;
   const product = await (
-    await fetch(`http://localhost:3000/api/products/${id}`)
+    await fetch(`/api/products/${id}`)
   ).json();
 
-  const validCategories = await ( await fetch(`http://localhost:3000/api/products/categories`) ).json();
+  const validCategories = await ( await fetch(`/api/products/categories`) ).json();
 
   return {
     props: {
-      product: product.data && product.data.status === 404 ? null : product,
+      product: product.data && product.data.status === 404 ? { found: false } : product,
       validCategories
     },
     revalidate: 1,
