@@ -128,10 +128,10 @@ export default Product;
 export const getStaticProps: GetStaticProps = async (context) => {
   const { id } = context.params;
   const product = await (
-    await fetch(`/api/products/${id}`)
+    await fetch(`tornicentro-1ddzuzrtw-jdprietom03.vercel.app/api/products/${id}`)
   ).json();
 
-  const validCategories = await ( await fetch(`/api/products/categories`) ).json();
+  const validCategories = await ( await fetch(`tornicentro-1ddzuzrtw-jdprietom03.vercel.app/api/products/categories`) ).json();
 
   return {
     props: {
