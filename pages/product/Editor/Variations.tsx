@@ -49,7 +49,7 @@ const Variation = ({ variation }) => {
   );
 };
 
-export const Variations = ({ parentId }) => {
+const Variations = ({ parentId }) => {
   const [data, setData] = useState([]);
   const list = useRef(null)
 
@@ -89,3 +89,6 @@ export const Variations = ({ parentId }) => {
     </>
   );
 };
+
+
+export default Variations;

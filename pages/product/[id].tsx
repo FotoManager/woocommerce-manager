@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps, GetStaticPaths } from "next";
 import classes from "./product.module.css";
-import { Category } from "./Editor/Category";
 import { useRef, useState } from "react";
 import Add from "../../icons/add";
-import { ModalCategories } from "./Editor/ModalCategories";
-import { Variations } from "./Editor/Variations";
+import Category from "./Editor/Category";
+import ModalCategories from "./Editor/ModalCategories";
+import Variations from "./Editor/Variations";
 
 const Product = ({ product, validCategories }) => {
   if (!product) return null;

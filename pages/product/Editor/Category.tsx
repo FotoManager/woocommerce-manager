@@ -1,7 +1,7 @@
 import classes from "./../product.module.css";
 import DeleteIcon from "./../../../icons/delete";
 
-export const Category = ({ category, deleteC }) => {
+const Category = ({ category, deleteC }) => {
   const { id, name } = category;
 
   return (
@@ -13,3 +13,5 @@ export const Category = ({ category, deleteC }) => {
     </div>
   );
 };
+
+export default Category;

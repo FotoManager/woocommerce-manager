@@ -1,7 +1,6 @@
 import classes from "./modal.module.css";
 
-
-export const ModalCategories = ({ categories, setCategories, closeModal, useCategories }) => {
+const ModalCategories = ({ categories, setCategories, closeModal, useCategories }) => {
 
     const categoriesList = useCategories.filter(category => !categories.includes(category));
 
@@ -33,3 +32,5 @@ export const ModalCategories = ({ categories, setCategories, closeModal, useCate
     )
 
 }
+
+export default ModalCategories;
