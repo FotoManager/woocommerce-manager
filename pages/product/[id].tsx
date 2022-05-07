@@ -8,7 +8,7 @@ import ModalCategories from "./Editor/ModalCategories";
 import Variations from "./Editor/Variations";
 
 const Product = ({ product, validCategories }) => {
-  if (!product) return null;
+  if (!product) return <p>Loading...</p>;
 
   const {
     id,
@@ -130,12 +130,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const product = await (
     await fetch(`http://localhost:3000/api/products/${id}`)
   ).json();
-  
+
   const validCategories = await ( await fetch(`http://localhost:3000/api/products/categories`) ).json();
 
   return {
     props: {
-      product,
+      product: product.data && product.data.status === 404 ? null : product,
       validCategories
     },
     revalidate: 1,
@@ -147,7 +147,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     paths: [
       {
         params: {
-          id: "1",
+          id: "9672",
         },
       },
     ],

@@ -2,6 +2,9 @@ import classes from "./../product.module.css";
 import DeleteIcon from "./../../../icons/delete";
 
 const Category = ({ category, deleteC }) => {
+
+  if(!category) return <p>Loading...</p>;
+
   const { id, name } = category;
 
   return (

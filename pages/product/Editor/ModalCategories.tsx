@@ -1,7 +1,7 @@
 import classes from "./modal.module.css";
 
 const ModalCategories = ({ categories, setCategories, closeModal, useCategories }) => {
-
+    if(!useCategories) return <p>Loading...</p>;
     const categoriesList = useCategories.filter(category => !categories.includes(category));
 
     return (
