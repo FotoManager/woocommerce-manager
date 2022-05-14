@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Edit from "./../../icons/edit";
 import Trash from "./../../icons/trash";
 import classes from "./variations.module.css";
-import { ROUTES } from "./../../config";
+import { ROUTES } from "../../utils/config";
 
 const Variation = ({ variation }) => {
     const router = useRouter();
