@@ -139,7 +139,7 @@ const Product = ({ product, validCategories }) => {
  
 export default Product;
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetStaticProps = async (context) => {
   const { id } = context.params;
   
   const product = await (
@@ -152,19 +152,18 @@ export const getStaticProps: GetStaticProps = async (context) => {
       product:{ found: product !== undefined, ...product },
       validCategories
     },
-    revalidate: 1,
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [
-      {
-        params: {
-          id: "9672",
-        },
-      },
-    ],
-    fallback: true, // false or 'blocking' 
-  };
-};
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   return {
+//     paths: [
+//       {
+//         params: {
+//           id: "9672",
+//         },
+//       },
+//     ],
+//     fallback: true, // false or 'blocking' 
+//   };
+// };
