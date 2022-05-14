@@ -4,7 +4,7 @@ import classes from "./products.module.css";
 import { useRouter } from "next/router";
 
 export const Product = ({ product }) => {
-    console.log(product)
+    //console.log(product)
     const router = useRouter();
 
     const handleClick = (event) => {

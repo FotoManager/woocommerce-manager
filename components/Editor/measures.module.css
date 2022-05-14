@@ -1,21 +1,22 @@
-.variations{
+.measures{
     height: 100%;
     width: 100%;
 }
 
-.variation {
+.measure {
     display: flex;
     align-items: center;
     padding: 0px .4rem;
     cursor: pointer;
     border-bottom: 1px solid #e5e5e5;
+    height: 45px;
 }
 
-.variation:hover{
+.measure:hover{
     background-color: #f5f5f5;
 }
 
-.variation .image {
+.measure .image {
     flex: 1 1 45px;
     object-fit: cover;
     width: 100%;
@@ -23,34 +24,18 @@
 
 }
 
-.variation .image > img{
+.measure .image > img{
     width: 100%;
     cursor: pointer;
     image-rendering: -webkit-optimize-contrast;
 }
 
-.variation .name{
+.measure .name{
     flex: 1 1 90%;
     display: flex;
     justify-content: space-between;
     padding: 0 1rem;
     gap: 1rem;
-}
-
-.zoom {
-    position: fixed;
-    display: flex;
-    width: 180px;
-    border: 1px solid #777;
-    background: white;
-    opacity: 0;
-    height: max-content;
-    z-index: 10;
-}
-
-.zoom img {
-    image-rendering: -webkit-optimize-contrast;
-    width: 100%;
 }
 
 .collapse {

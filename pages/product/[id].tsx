@@ -6,9 +6,11 @@ import Add from "../../icons/add";
 import Category from "../../components/Editor/Category";
 import ModalCategories from "../../components/Editor/ModalCategories";
 import Variations from "../../components/Editor/Variations";
+import Measures from "../../components/Editor/Measures";
+import Checkbox from "../../components/Editor/Checkbox";
 
 const Product = ({ product, validCategories }) => {
-  if (!product.found) return <p>Loading...</p>;
+  if (!product || !product.found) return <p>Loading...</p>;
 
   const {
     id,
@@ -22,12 +24,16 @@ const Product = ({ product, validCategories }) => {
     description,
   } = product;
 
+  const { options } = attributes[0] || {};
+
   const [priceValue, setPriceValue] = useState(price);
   const [title, setTitle] = useState(name);
   const [stock, setStock] = useState(stock_quantity);
   const [descriptionContent, setDescription] = useState(description);
   const [listCategories, setListCategories] = useState(categories);
   const [openCategories, setOpenCategories] = useState(false);
+  const [onSale, setOnSale] = useState(on_sale);
+  const [measures, setMeasures] = useState(options);
 
   const addCategory = (category) => {
     setListCategories([...listCategories, category]);
@@ -37,7 +43,11 @@ const Product = ({ product, validCategories }) => {
 
   const deleteCategory = (category) => () => {
         setListCategories(listCategories.filter((cat) => cat.id !== category));
-    }
+  }
+
+  const updateSale = () => {
+    setOnSale(!onSale);
+  }
 
   return (
     <div className={classes.container}>
@@ -88,7 +98,9 @@ const Product = ({ product, validCategories }) => {
 
             <div className={classes.sale}>
               <div className={classes.col_1}>En venta</div>
-              <div className={classes.col_2}>{on_sale}</div>
+              <div className={classes.col_2}>
+                <Checkbox state={onSale} updateState={updateSale} />
+              </div>
             </div>
 
             <div className={classes.stock}>
@@ -106,7 +118,9 @@ const Product = ({ product, validCategories }) => {
 
             <div className={classes.measures}>
               <div className={classes.col_1}>Medidas</div>
-              <div className={`${classes.col_2} mx-h-45`}></div>
+              <div className={`${classes.col_2} mx-h-45`}>
+                <Measures measures={measures} />
+              </div>
             </div>
 
             <div className={classes.variations}>
@@ -127,15 +141,15 @@ export default Product;
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { id } = context.params;
+  
   const product = await (
-    await fetch(`tornicentro-1ddzuzrtw-jdprietom03.vercel.app/api/products/${id}`)
+    await fetch(`${process.env.API_HOST}/product/${id}`)
   ).json();
-
-  const validCategories = await ( await fetch(`tornicentro-1ddzuzrtw-jdprietom03.vercel.app/api/products/categories`) ).json();
+  const validCategories = await ( await fetch(`${process.env.API_HOST}/products/categories`) ).json();
 
   return {
     props: {
-      product: product.data && product.data.status === 404 ? { found: false } : product,
+      product:{ found: product !== undefined, ...product },
       validCategories
     },
     revalidate: 1,
