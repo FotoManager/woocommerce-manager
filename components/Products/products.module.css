@@ -62,8 +62,14 @@
     object-fit: cover;
 }
 
+.image > span {
+    position: relative!important;
+}
+
 .image  img {
-    width: 100%;
+    position: relative!important;
+    height: auto!important;
+    width: 100%!important;
     object-fit: cover;
     image-rendering: -webkit-optimize-contrast;
 }
