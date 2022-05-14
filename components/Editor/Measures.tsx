@@ -42,8 +42,8 @@ const Measures = ({ measures }) => {
     <>
       <div className={`${classes.measures} `} >
         <div className={`${data && data.length > 0 ? classes.container : ''} mx-h-45`} ref={list} onMouseOver={handleCollapse} onMouseLeave={handleClose} onClick={handleCollapseClick}>
-            {data.map((measure) => (
-                <Measure measure={measure} key={measure.id} />
+            {data.map((measure, key) => (
+                <Measure measure={measure} key={key} />
             ))}
         </div> 
       </div>

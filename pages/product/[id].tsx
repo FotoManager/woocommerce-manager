@@ -145,7 +145,7 @@ export const getServerSideProps: GetStaticProps = async (context) => {
   const product = await (
     await fetch(`${process.env.API_HOST}/product/${id}`)
   ).json();
-  const validCategories = await ( await fetch(`${process.env.API_HOST}/products/categories`) ).json();
+  const validCategories = await ( await fetch(`${process.env.API_HOST}/categories`) ).json();
 
   return {
     props: {

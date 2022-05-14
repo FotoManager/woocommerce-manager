@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Edit from "./../../icons/edit";
 import Trash from "./../../icons/trash";
 import classes from "./variations.module.css";
+import { ROUTES } from "../../config";
 
 const Variation = ({ variation }) => {
     const router = useRouter();
@@ -54,15 +55,19 @@ const Variations = ({ parentId }) => {
   const list = useRef(null)
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/products/variations", {
+    fetch(`${ROUTES.API_HOST}/product/variations/${parentId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ parentId }),
+        //cors
+        "Access-Control-Allow-Origin": "*",
+
+      }
     })
       .then((res) => res.json())
-      .then((data) => setData(data));
+      .then((data) => {
+        setData(data)
+      });
   }, [parentId]);
 
   const handleCollapse = () => {
