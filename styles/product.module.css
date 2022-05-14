@@ -56,6 +56,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    object-fit: cover;
+}
+
+.image > img {
+    width: 100%;
 }
 
 .product > .content {
