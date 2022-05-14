@@ -1,13 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps, GetStaticPaths } from "next";
+import dynamic from 'next/dynamic'
 import classes from "./../../styles/product.module.css";
-import { useRef, useState } from "react";
+import { useRef, useState, Suspense } from "react";
 import Add from "../../icons/add";
 import Category from "../../components/Editor/Category";
 import ModalCategories from "../../components/Editor/ModalCategories";
-import Variations from "../../components/Editor/Variations";
+//import Variations from "../../components/Editor/Variations";
 import Measures from "../../components/Editor/Measures";
 import Checkbox from "../../components/Editor/Checkbox";
+
+//Lazy import of Variations
+const Variations = dynamic(() => import("../../components/Editor/Variations"));
+
 
 const Product = ({ product, validCategories }) => {
   if (!product || !product.found) return <p>Loading...</p>;
@@ -126,7 +131,9 @@ const Product = ({ product, validCategories }) => {
             <div className={classes.variations}>
               <div className={classes.col_1}>Variaciones</div>
               <div className={`${classes.col_2} mx-h-45`}>
-                <Variations parentId={id}/>
+                <Suspense>
+                  <Variations parentId={id}/>
+                </Suspense>
               </div> 
             </div>
           </div>
