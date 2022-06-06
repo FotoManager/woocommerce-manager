@@ -9,7 +9,7 @@ export const getAllProducts = async () => {
 
     for (let i = 1; i <= 3; i++) {
         promises.push(
-            (await fetch(`${process.env.API_HOST}/products/${i}`)).json()
+            (await fetch(`${process.env.API_HOST}/inventory/${i}`)).json()
         );
     }
 
