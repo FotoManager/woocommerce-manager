@@ -10,6 +10,8 @@
     cursor: pointer;
     border-bottom: 1px solid #e5e5e5;
     height: 45px;
+    scroll-snap-align: center;
+
 }
 
 .measure:hover{
@@ -36,20 +38,28 @@
     justify-content: space-between;
     padding: 0 1rem;
     gap: 1rem;
+    
 }
 
 .collapse {
     max-height: 250px!important;
-    overflow: auto;
     bottom: 0;
     position: absolute;
     transition: all 0.3s;
     border: 1px solid #777;
-    overflow: scroll;
+    overflow-y: scroll!important;
+    
 }
 
+
 .collapse::-webkit-scrollbar {
-    width: 0;
+    width: 6px;
+    background-color: #ebebeb;
+}
+
+.collapse::-webkit-scrollbar-thumb {
+    width: 6px;
+    background-color: #0b1361;
 }
 
 .container {
@@ -60,6 +70,8 @@
     overflow: hidden;
     transition: max-height 0.3s;
     width: 100%;
+    scroll-snap-type: y mandatory;
+
 }
 
 .remove {
@@ -87,4 +99,101 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+}
+
+.modal_editor {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal_content{
+    background-color: white;
+    width: 80%;
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e5e5;
+    width: 100%;
+}
+
+.modal_header .modal_title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal_body {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    padding: 1rem;
+    width: 100%;
+}
+
+.modal_body .input {
+    width: 100%;
+    border: 1px solid #0b1361;
+    font-size: 1.2rem;
+    display: flex;
+    gap: 0.2rem;
+    align-items: center;
+}
+
+.modal_body .input:first-child::before{
+    content: "$";
+    padding: .5rem;
+    background-color: #0b1361;
+    color: white;
+    
+}
+
+.modal_body .input:last-child::after{
+    content: "Unidad/es";
+    padding: .5rem;
+    background-color: #0b1361;
+    color: white;
+    
+}
+
+.input:last-child input {
+    text-align: right;
+}
+
+.modal_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    gap: 1rem;
+    width: 100%;
+}
+
+.modal_actions button {
+    padding: .5rem;
+    border: 3px double #707070;
+    background: white;
+    cursor: pointer;
+}
+
+.modal_actions button:hover{
+    border: 3px double #0b1361;
 }

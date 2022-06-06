@@ -3,6 +3,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .product{
@@ -51,17 +53,18 @@
 }
 
 .product > .image {
-    flex: 1 1 auto;
+    flex: 1 1 480px;
     border: 1px solid #0b1361;
     display: flex;
     justify-content: center;
     align-items: center;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .image > img {
-    width: 100%;
+    width: 90%;
 }
+
 
 .product > .content {
     flex: 1 1 100%;
@@ -208,5 +211,39 @@
         min-height: 45px;
     }
 
+    .image {
+        flex: 1 1 250px!important;
+    }
 
+    .image > img {
+        max-width: 250px;
+    }
+
+
+}
+
+.actions {
+    padding: 1rem 0;
+}
+
+.actions .save {
+    background: #0b1361;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.1s;
+}
+
+.actions .save:hover{
+    background: #1e2885;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.1s;
 }

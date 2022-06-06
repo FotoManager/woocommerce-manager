@@ -1,12 +1,4 @@
-import WooCommerceAPI from "woocommerce-api";
-
-const WooCommerce = new WooCommerceAPI({
-    url: process.env.WOO_HOST,
-    consumerKey: process.env.WOO_CONSUMER_KEY,
-    consumerSecret: process.env.WOO_CONSUMER_SECRET,
-    wpAPI: true,
-    version: 'wc/v2'
-});
+import { ROUTES } from "../../../utils/config";
 
 export const getAllProducts = async () => {
     const promises: Promise<any>[] = [];
@@ -30,3 +22,26 @@ export const getAllProducts = async () => {
     return promises;
 }
 
+export const updateProduct = (product: any) => {
+    fetch(`http://localhost:5000/products/${product.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            //cors
+            'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ product })
+    });
+}
+
+export const updateVariation = (parentId:any, product: any) => {
+    fetch(`http://localhost:5000/products/${parentId}/variation/${product.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            //cors
+            'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ product })
+    });
+}

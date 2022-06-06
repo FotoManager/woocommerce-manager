@@ -1,21 +1,17 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps } from "next";
 import dynamic from 'next/dynamic'
-import classes from "./../../styles/product.module.css";
-import { useRef, useState, Suspense } from "react";
-import Add from "../../icons/add";
-import Category from "../../components/Editor/Category";
-import ModalCategories from "../../components/Editor/ModalCategories";
-import { updateProduct } from "./../api/helpers/api";
+import classes from "./../../../styles/product.module.css";
+import {  useState, Suspense } from "react";
+import Add from "../../../icons/add";
+import Category from "../../../components/Editor/Category";
+import ModalCategories from "../../../components/Editor/ModalCategories";
+import { updateVariation } from "./../../api/helpers/api";
 //import Variations from "../../components/Editor/Variations";
-import Measures from "../../components/Editor/Measures";
-import Checkbox from "../../components/Editor/Checkbox";
+import Measures from "../../../components/Editor/Measures";
+import Checkbox from "../../../components/Editor/Checkbox";
 
-//Lazy import of Variations
-const Variations = dynamic(() => import("../../components/Editor/Variations"));
-
-
-const Product = ({ product, validCategories }) => {
+const Product = ({ product, validCategories, attributes }) => {
   if (!product || !product.found) return <p>Loading...</p>;
 
   const {
@@ -23,7 +19,6 @@ const Product = ({ product, validCategories }) => {
     name,
     images,
     categories,
-    attributes,
     price,
     on_sale,
     stock_quantity,
@@ -40,7 +35,7 @@ const Product = ({ product, validCategories }) => {
   const [openCategories, setOpenCategories] = useState(false);
   const [onSale, setOnSale] = useState(on_sale);
   const [measures, setMeasures] = useState(options);
-
+  
   const addCategory = (category) => {
     setListCategories([...listCategories, category]);
   }
@@ -52,25 +47,34 @@ const Product = ({ product, validCategories }) => {
   }
 
   const updateSale = () => {
-    console.log(product)
     setOnSale(!onSale);
   }
 
   const handleSave = () => {
-    console.log(product)
 
     const updatedProduct = {
       id,
       name: title,
       categories: listCategories,
-      attributes: [ { ...attributes[0], options: ["$17.550 (1 Unidad)"]} ],
+      attributes: [ { ...product.attributes[0], option: measures[0] || ""} ],
       regular_price: priceValue,
       on_stock: onSale,
       stock_quantity: stock,
       description: descriptionContent,
     };
-    console.log(measures)
-    updateProduct(updatedProduct)
+    console.log(product, updatedProduct)
+    updateVariation(product.parent_id, updatedProduct)
+  }
+
+  const selectMeasure = (id) => {
+    const newData = [measures[id]];
+    
+    for(let i = 0; i < measures.length; i++){
+        if(i !== id){
+            newData.push(measures[i])
+        }
+    }
+    setMeasures(newData);
   }
 
   return (
@@ -143,17 +147,8 @@ const Product = ({ product, validCategories }) => {
             <div className={classes.measures}>
               <div className={classes.col_1}>Medidas</div>
               <div className={`${classes.col_2} mx-h-45`}>
-                <Measures measures={measures} updateMeasures={setMeasures}/>
+                <Measures measures={measures} selectMeasure={selectMeasure}/>
               </div>
-            </div>
-
-            <div className={classes.variations}>
-              <div className={classes.col_1}>Variaciones</div>
-              <div className={`${classes.col_2} mx-h-45`}>
-                <Suspense>
-                  <Variations parentId={id}/>
-                </Suspense>
-              </div> 
             </div>
           </div>
         </div>
@@ -174,12 +169,16 @@ export const getServerSideProps: GetStaticProps = async (context) => {
   const product = await (
     await fetch(`${process.env.API_HOST}/product/${id}`)
   ).json();
+  const parent = await (
+    await fetch(`${process.env.API_HOST}/product/${product.parent_id}`)
+  ).json();
   const validCategories = await ( await fetch(`${process.env.API_HOST}/categories`) ).json();
 
   return {
     props: {
       product:{ found: product !== undefined, ...product },
-      validCategories
+      validCategories,
+      attributes: parent.attributes
     },
   };
 };

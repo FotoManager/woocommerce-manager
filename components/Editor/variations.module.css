@@ -9,6 +9,9 @@
     padding: 0px .4rem;
     cursor: pointer;
     border-bottom: 1px solid #e5e5e5;
+    height: 45px;
+    scroll-snap-align: center;
+    
 }
 
 .variation:hover{
@@ -20,7 +23,7 @@
     object-fit: cover;
     width: 100%;
     height: 100%;
-
+    min-width: 45px;
 }
 
 .variation .image > img{
@@ -60,11 +63,17 @@
     position: absolute;
     transition: all 0.3s;
     border: 1px solid #777;
-    overflow: scroll;
+    overflow-y: scroll!important;
 }
 
 .collapse::-webkit-scrollbar {
-    width: 0;
+    width: 6px;
+    background-color: #ebebeb;
+}
+
+.collapse::-webkit-scrollbar-thumb {
+    width: 6px;
+    background-color: #0b1361;
 }
 
 .container {
@@ -75,6 +84,7 @@
     overflow: hidden;
     transition: max-height 0.3s;
     width: 100%;
+    scroll-snap-type: y mandatory;
 }
 
 .remove {

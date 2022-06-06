@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['www.tornicentro.com.co'],
+    domains: [process.env.WOO_HOST],
   }
 }
 

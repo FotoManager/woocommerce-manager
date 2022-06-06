@@ -42,7 +42,7 @@ const Variation = ({ variation }) => {
         <span><strong>Serie: </strong>{variation.sku}</span>
         <span><strong>Stock: </strong>{variation.stock_quantity}</span>
        <span className={classes.actions}>
-            <span className={classes.edit} onClick={() => router.push(`/product/${variation.id}`)}><Edit /></span>
+            <span className={classes.edit} onClick={() => router.push(`/product/variation/${variation.id}`)}><Edit /></span>
             <span className={classes.remove}title="delete"><Trash /></span>
         </span> 
       </div>
