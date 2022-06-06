@@ -23,7 +23,7 @@ export const getAllProducts = async () => {
 }
 
 export const updateProduct = (product: any) => {
-    fetch(`http://localhost:5000/products/${product.id}`, {
+    fetch(`${process.env.API_HOST}/products/${product.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export const updateProduct = (product: any) => {
 }
 
 export const updateVariation = (parentId:any, product: any) => {
-    fetch(`http://localhost:5000/products/${parentId}/variation/${product.id}`, {
+    fetch(`${process.env.API_HOST}/products/${parentId}/variation/${product.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
