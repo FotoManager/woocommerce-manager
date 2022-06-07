@@ -1,4 +1,5 @@
 import { ROUTES } from "../../../utils/config";
+import axios from "axios";
 
 export const getAllProducts = async () => {
     const promises: Promise<any>[] = [];
