@@ -17,23 +17,20 @@ export default function ItemModal() {
 
   function updateItem() {
     if (imgUpload.current.files.length > 0) {
-      var formData = new FormData();
       let file = imgUpload.current.files[0];
-      formData.append("file", file);
-      formData.append("title", file.name);
-      formData.append("post", itemid); //coming from props
       let headers = {};
-      headers["Content-Type"] = "multipart/form-data";
+      headers["Authorization"] = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsIm5hbWUiOiJKcHJpZXRvIiwiaWF0IjoxNjU0NTcxNjMwLCJleHAiOjE4MTIyNTE2MzB9.UUX7XDNpaugrkYBnQaAXtL-f3JGbfdNNqESNUKeifqQ";
+      headers["Content-Type"] = "image/jpeg";
       headers["Accept"] = "application/json";
       headers["Content-Disposition"] =
-        "attachment; filename='" + file.name + "'";
-      headers["Authorization"] = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsIm5hbWUiOiJKcHJpZXRvIiwiaWF0IjoxNjU0NTcxNjMwLCJleHAiOjE4MTIyNTE2MzB9.UUX7XDNpaugrkYBnQaAXtL-f3JGbfdNNqESNUKeifqQ";
-
+        "attachment; filename=" + file.name;
+       
       axios
-        .post( "https://tornicentro.com.co/wp-json/wp/v2/media/", file, headers)
+        .post( "https://tornicentro.com.co/wp-json/wp/v2/media/", file, headers )
         .then(function (resp) {
           console.log(resp);
         });
+
     }
   }
 
