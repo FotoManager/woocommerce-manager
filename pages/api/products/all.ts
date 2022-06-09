@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { WooCommerce } from './__config';
-
+import { ROUTES } from "../../../utils/config";
+import axios from "axios";
 
 const handle = (req: NextApiRequest, res: NextApiResponse) => {
     //Response promises

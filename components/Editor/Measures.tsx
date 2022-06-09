@@ -49,10 +49,10 @@ const Measures: React.FC<{
   updateMeasures?: any;
   selectMeasure?: any;
 }> = ({ measures, updateMeasures, selectMeasure }) => {
-  const [id, setId] = useState(null);
-  const [editingMeasure, setEditingMeasure] = useState(null);
-  const [newPrice, setNewPrice] = useState(null);
-  const [newQuantity, setNewQuantity] = useState(null);
+  const [id, setId] = useState("");
+  const [editingMeasure, setEditingMeasure] = useState("");
+  const [newPrice, setNewPrice] = useState("");
+  const [newQuantity, setNewQuantity] = useState("");
 
   const list = useRef(null);
 

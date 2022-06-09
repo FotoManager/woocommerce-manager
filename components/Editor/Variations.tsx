@@ -55,7 +55,7 @@ const Variations = ({ parentId }) => {
   const list = useRef(null)
 
   useEffect(() => {
-    fetch(`${!ROUTES.API_HOST ? ROUTES.API_HOST : "http://localhost:5000"}/product/variations/${parentId}`, {
+    fetch(`http://localhost:3000/api/products/${parentId}/variations`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

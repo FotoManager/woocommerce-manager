@@ -1,7 +1,3 @@
-import { ROUTES } from "../../../utils/config";
-import axios from "axios";
-import { AnyRecord } from "dns";
-
 export const getAllProducts = async () => {
     const promises: Promise<any>[] = [];
     // for (let i = 1; i <= 3; i++) {
@@ -26,7 +22,7 @@ export const getAllProducts = async () => {
 
 export const updateProduct = (product: any, id:any) => {
 
-    return fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/products/${id}`, {
+    return fetch(`http://localhost:3000/api/products/${id}`, {
         method: 'PUT',
         body: product
     });
