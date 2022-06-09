@@ -78,6 +78,7 @@ const Product = ({ product, validCategories }) => {
     updatedProduct.append("attributes", JSON.stringify([ { ...attributes[0], options: measures}]));
     updatedProduct.append("regular_price", priceValue);
     updatedProduct.append("price", priceValue);
+    updatedProduct.append("sale_price", priceValue);
     updatedProduct.append("on_stock", onSale);
     updatedProduct.append("stock_quantity", stock);
     updatedProduct.append("description", descriptionContent);
