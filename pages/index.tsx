@@ -109,7 +109,7 @@ export const getStaticProps = async () => {
       maxSize,
       perPage,
     },
-    
+    revalidate: 10,
   };
 };
 
