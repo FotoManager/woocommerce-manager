@@ -75,7 +75,7 @@ const Product = ({ product, validCategories }) => {
     updatedProduct.append("id", id);
     updatedProduct.append("name", title);
     updatedProduct.append("categories", JSON.stringify(listCategories));
-    updatedProduct.append("attributes", JSON.stringify([ { ...attributes[0], options: ["$17.500 (1 Unidad)", "$96.000 (6 Unidades)"]}]));
+    updatedProduct.append("attributes", JSON.stringify([ { ...attributes[0], options: measures}]));
     updatedProduct.append("regular_price", priceValue);
     updatedProduct.append("on_stock", onSale);
     updatedProduct.append("stock_quantity", stock);
