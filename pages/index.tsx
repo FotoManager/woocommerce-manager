@@ -8,12 +8,11 @@ import Products from "../components/Products/Products";
 import Search from "../components/Search/Search";
 import LoaderPage from "../components/loader/LoaderPage";
 
-export default function Home() {
+export default function Home({ data, size, perPage }) {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [maxSize, setMaxSize] = useState(0);
-  const [perPage, setPerPage] = useState(0);
+  const [maxSize, setMaxSize] = useState(size);
 
   const searchedProducts = useMemo(() => {
     if (search === "")
@@ -43,21 +42,19 @@ export default function Home() {
       }, []);
 
       const maxSize = products.length;
-      const perPage = 12;
 
       setProducts([
-        ...data.slice(
+        ...products.slice(
           (currentPage - 1) * perPage,
           Math.min(maxSize, perPage * currentPage)
         ),
       ]);
 
       setMaxSize(maxSize);
-      setPerPage(perPage);
     };
 
     loadData();
-  }, [currentPage]);
+  }, [data, currentPage]);
 
   if (products.length == 0) return <LoaderPage text="Cargando" />;
 
@@ -110,24 +107,24 @@ export default function Home() {
 //   };
 // };
 
-// export const getStaticProps = async () => {
-//   const productsPromises = await getAllProducts();
-//   const data = (await Promise.all(productsPromises)).map( product => {
-//       return JSON.parse(product.body);
-//   } );
+export const getStaticProps = async () => {
+  const productsPromises = await getAllProducts();
+  const data = (await Promise.all(productsPromises)).map( product => {
+      return JSON.parse(product.body);
+  } );
 
-//   const products = data.reduce((acc, curr) => {
-//     return acc.concat(curr);
-//   }, []);
+  const products = data.reduce((acc, curr) => {
+    return acc.concat(curr);
+  }, []);
 
-//   const maxSize = products.length;
-//   const perPage = 12;
+  const maxSize = products.length;
+  const perPage = 12;
 
-//   return {
-//     props: {
-//       data: products,
-//       maxSize,
-//       perPage,
-//     }
-//   };
-// };
+  return {
+    props: {
+      data: products,
+      maxSize,
+      perPage,
+    }
+  };
+};
