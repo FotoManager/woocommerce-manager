@@ -195,9 +195,9 @@ export const getServerSideProps: GetStaticProps = async (context) => {
   const { id } = context.params;
   
   const product = await (
-    await fetch(`http://localhost:3000/api/products/${id}`)
+    await fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/product/${id}`)
   ).json();
-  const validCategories = await ( await fetch("http://localhost:3000/api/products/categories") ).json();
+  const validCategories = await ( await fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/categories`) ).json();
 
   return {
     props: {

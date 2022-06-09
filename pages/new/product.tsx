@@ -230,7 +230,7 @@ export const getServerSideProps: GetStaticProps = async (context) => {
   const validCategories = await (
     await fetch(
       `${
-        !process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"
+        process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"
       }/categories`
     )
   ).json();
