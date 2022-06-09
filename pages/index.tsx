@@ -7,59 +7,44 @@ import { getAllProducts } from "./api/helpers/api";
 import Products from "../components/Products/Products";
 import Search from "../components/Search/Search";
 import LoaderPage from "../components/loader/LoaderPage";
+import useSWR, { SWRConfig } from "swr";
 
-export default function Home({ data, size, perPage }) {
-  const [products, setProducts] = useState(null);
-  const [productsPerPage, setProductsPerPage] = useState(null);
+const fetcher = async (url) => {
+  const productsPromises = await getAllProducts();
+  const data = (await Promise.all(productsPromises)).map( product => {
+      return JSON.parse(product.body);
+  } );
+
+  const products = data.reduce((acc, curr) => {
+    return acc.concat(curr);
+  }, []);
+
+  return products;
+}
+
+function Inventory({ perPage }){
+
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [maxSize, setMaxSize] = useState(size);
+  const { data, error } = useSWR("/api/products/all", fetcher);
 
   const searchedProducts = useMemo(() => {
-    const productsData = !products ? data : products;
-    
+    if(!data) return [];
+
     if (search === "")
       return [
-        ...productsData.slice(
+        ...data.slice(
           (currentPage - 1) * perPage,
-          Math.min(maxSize, perPage * currentPage)
+          Math.min(data.length, perPage * currentPage)
         ),
       ];
-    return productsData.filter((product) => {
+    return data.filter((product) => {
       return (
         product.name.toLowerCase().includes(search.toLowerCase()) ||
         product.id.toString().includes(search)
       );
     });
-  }, [data, search, products]);
-
-  
-  useEffect(() => {
-    const loadData = async () => {
-      const productsPromises = await getAllProducts();
-      const data = (await Promise.all(productsPromises)).map((product) => {
-        return JSON.parse(product.body);
-      });
-
-      const productsData = data.reduce((acc, curr) => {
-        return acc.concat(curr);
-      }, []);
-
-      const maxSize = productsData.length
-      
-      if(products || productsData.length != data.length){
-        setMaxSize(maxSize);
-        setProducts([
-          ...productsData.slice(
-            (currentPage - 1) * perPage,
-            Math.min(maxSize, perPage * currentPage)
-          ),
-        ]);
-      }
-    };
-
-    loadData();
-  }, []);
+  }, [data, search]);
 
   if (!data || data.length == 0) return <LoaderPage text="Cargando" />;
 
@@ -88,6 +73,14 @@ export default function Home({ data, size, perPage }) {
       </footer>
     </div>
   );
+  
+}
+
+export default function Home({ fallback, perPage }) {
+  return ( 
+    <SWRConfig value={{ fallback }}>
+      <Inventory perPage={perPage}/>
+    </SWRConfig>)
 }
 
 // export const getServerSideProps = async () => {
@@ -122,13 +115,13 @@ export const getStaticProps = async () => {
     return acc.concat(curr);
   }, []);
 
-  const size = products.length;
   const perPage = 12;
 
   return {
     props: {
-      data: products,
-      size,
+      fallback: {
+        inventory: products,
+      },
       perPage,
     }
   };

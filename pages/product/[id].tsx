@@ -11,6 +11,7 @@ import { updateProduct } from "./../api/helpers/api";
 import Measures from "../../components/Editor/Measures";
 import Checkbox from "../../components/Editor/Checkbox";
 import LoaderPage from "../../components/loader/LoaderPage";
+import ModalConfirmation from "../../components/Confirmation/Confirmation";
 
 //Lazy import of Variations
 const Variations = dynamic(() => import("../../components/Editor/Variations"));
@@ -45,6 +46,7 @@ const Product = ({ product, validCategories }) => {
   const imgUpload = useRef(null);
   const [img, setImg] = useState(images[0].src || "");
   const [loading, setLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const previewImage = () => {
     const oFReader = new FileReader();
@@ -89,7 +91,12 @@ const Product = ({ product, validCategories }) => {
     setLoading(true);
     updateProduct(updatedProduct, id).then(() => {
       setLoading(false);
+      setShowConfirmation(false);
     });
+  }
+
+  const handlerResponse = (response: boolean) => {
+    return response ? handleSave() : setShowConfirmation(false);
   }
 
   if(loading) return <LoaderPage text={"Actualizando"} />;
@@ -183,9 +190,15 @@ const Product = ({ product, validCategories }) => {
           </div>
         </div>
         <div className={classes.actions}>
-          <button className={classes.save} onClick={handleSave}>Guardar</button>
+          <button className={classes.save} onClick={() => {
+            setShowConfirmation(true);
+          }}>Guardar</button>
         </div>
         { openCategories && <ModalCategories setCategories={addCategory} closeModal={() => setOpenCategories(false)} categories={listCategories} useCategories={validCategories}/> }
+        {showConfirmation && ( <ModalConfirmation
+          messageModal={"¿Estás seguro de actualizar este producto?"}
+          confirmResponse={handlerResponse}
+        /> )}
       </main>
     </div>
   );

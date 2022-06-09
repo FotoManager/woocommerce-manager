@@ -38,6 +38,13 @@ export const createProduct = (product: any) => {
     });
 }
 
+export const createVariation = (product: any, parentId: string) => {
+    return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/products/${parentId}/variation/`, {
+        method: 'POST',
+        body: product
+    });
+}
+
 export const updateVariation = (parentId:any, product: any) => {
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/products/${parentId}/variation/${product.id}`, {
         method: 'PUT',

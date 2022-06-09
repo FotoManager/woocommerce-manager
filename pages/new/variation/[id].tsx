@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps } from "next";
-import dynamic from "next/dynamic";
-import classes from "./../../styles/product.module.css";
+import { useRouter } from "next/router";
+import classes from "./../../../styles/product.module.css";
 import { useRef, useState, Suspense } from "react";
-import Add from "../../icons/add";
-import Category from "../../components/Editor/Category";
-import ModalCategories from "../../components/Editor/ModalCategories";
-import { createProduct } from "../api/helpers/api";
+import Add from "../../../icons/add";
+import Category from "../../../components/Editor/Category";
+import ModalCategories from "../../../components/Editor/ModalCategories";
+import { createVariation } from "../../api/helpers/api";
 //import Variations from "../../components/Editor/Variations";
-import Measures from "../../components/Editor/Measures";
-import Checkbox from "../../components/Editor/Checkbox";
-import LoaderPage from "../../components/loader/LoaderPage";
-import ModalErrors from "../../components/Editor/ModalErrors";
-import ModalConfirmation from "../../components/Confirmation/Confirmation";
+import Measures from "../../../components/Editor/Measures";
+import Checkbox from "../../../components/Editor/Checkbox";
+import LoaderPage from "../../../components/loader/LoaderPage";
+import ModalErrors from "../../../components/Editor/ModalErrors";
+import ModalConfirmation from "../../../components/Confirmation/Confirmation";
 
 const Product = ({ validCategories }) => {
   if (!validCategories) return <LoaderPage text={"Cargando"} />;
@@ -31,6 +31,8 @@ const Product = ({ validCategories }) => {
   const [errors, setErrors] = useState({});
   const [showErrors, setShowErrors] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const router = useRouter();
 
   const previewImage = () => {
     const oFReader = new FileReader();
@@ -62,7 +64,7 @@ const Product = ({ validCategories }) => {
     if (!stock) errors["stock"] = "El stock es requerido";
     if (!descriptionContent) errors["description"] = "La descripcion es requerida";
     if (!listCategories.length) errors["categories"] = "Las categorias son requeridas";
-    if (!measures.length) errors["measures"] = "Las medidas son requeridas";
+    // if (!measures.length) errors["measures"] = "Las medidas son requeridas";
     setErrors(errors);
     if (Object.keys(errors).length) setShowErrors(true);
     return Object.keys(errors).length === 0;
@@ -70,13 +72,13 @@ const Product = ({ validCategories }) => {
 
   const handleSave = () => {
     if(!validate()) return;
+    let parentId = router.query.id;
+
+    if(typeof parentId === "object")  parentId = parentId[0];
+
     const createdProduct = new FormData();
     createdProduct.append("name", title);
     createdProduct.append("categories", JSON.stringify(listCategories));
-    createdProduct.append(
-      "attributes",
-      JSON.stringify([{id:0, name: "Cantidad", options: measures, position: 0, variation: true, visible: true}])
-    );
     createdProduct.append("regular_price", priceValue);
     createdProduct.append("on_stock", onSale.toString());
     createdProduct.append("stock_quantity", stock);
@@ -87,7 +89,7 @@ const Product = ({ validCategories }) => {
 
     setLoading(true);
 
-    createProduct(createdProduct).then((res) => {
+    createVariation(createdProduct, parentId ).then((res) => {
       setLoading(false);
       setShowConfirmation(false);
     });
@@ -191,12 +193,12 @@ const Product = ({ validCategories }) => {
               </div>
             </div>
 
-            <div className={classes.measures}>
+            {/* <div className={classes.measures}>
               <div className={classes.col_1}>Medidas</div>
               <div className={`${classes.col_2} mx-h-45`}>
                 <Measures measures={measures} updateMeasures={setMeasures} />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className={classes.actions}>

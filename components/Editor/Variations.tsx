@@ -4,6 +4,7 @@ import Edit from "./../../icons/edit";
 import Trash from "./../../icons/trash";
 import classes from "./variations.module.css";
 import { ROUTES } from "../../utils/config";
+import Add from "../../icons/add";
 
 const Variation = ({ variation }) => {
     const router = useRouter();
@@ -53,6 +54,7 @@ const Variation = ({ variation }) => {
 const Variations = ({ parentId }) => {
   const [data, setData] = useState([]);
   const list = useRef(null)
+  const router = useRouter();
 
   useEffect(() => {
     fetch(`${ROUTES.API_HOST ? ROUTES.API_HOST : "http://localhost:5000"}/product/variations/${parentId}`, {
@@ -86,9 +88,18 @@ const Variations = ({ parentId }) => {
       <div className={`${classes.variations} `} >
         <div className={`${data.length > 0 ? classes.container : ''} mx-h-45`} ref={list} onMouseOver={handleCollapse} onMouseLeave={handleClose}>
             
-            {data.reverse().map((variation) => (
-                <Variation variation={variation} key={variation.id} />
+            {data.reverse().map((variation, index) => (
+                <Variation variation={variation} key={data.length - index - 1} />
             ))}
+
+          <div className={classes.add_variation} key={-1}>
+            <span>Agregar variacion</span>
+            <button className={classes.add} title="add" onClick={() => {
+              router.push(`/new/variation/${parentId}`)
+            }}>
+              <Add />
+            </button>
+          </div>
         </div> 
       </div>
     </>
