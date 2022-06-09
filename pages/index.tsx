@@ -89,7 +89,7 @@ export default function Home({ data, maxSize, perPage }) {
 //   };
 // };
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   const productsPromises = await getAllProducts();
   const data = (await Promise.all(productsPromises)).map( product => {
       return JSON.parse(product.body);
@@ -108,8 +108,7 @@ export const getStaticProps = async () => {
       data: products,
       maxSize,
       perPage,
-    },
-    revalidate: 10,
+    }
   };
 };
 
