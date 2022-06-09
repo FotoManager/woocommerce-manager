@@ -9,27 +9,31 @@ import Search from "../components/Search/Search";
 import LoaderPage from "../components/loader/LoaderPage";
 
 export default function Home({ data, size, perPage }) {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(null);
+  const [productsPerPage, setProductsPerPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [maxSize, setMaxSize] = useState(size);
 
   const searchedProducts = useMemo(() => {
+    const productsData = !products ? data : products;
+    
     if (search === "")
       return [
-        ...products.slice(
+        ...productsData.slice(
           (currentPage - 1) * perPage,
           Math.min(maxSize, perPage * currentPage)
         ),
       ];
-    return products.filter((product) => {
+    return productsData.filter((product) => {
       return (
         product.name.toLowerCase().includes(search.toLowerCase()) ||
         product.id.toString().includes(search)
       );
     });
-  }, [products, search]);
+  }, [data, search, products]);
 
+  
   useEffect(() => {
     const loadData = async () => {
       const productsPromises = await getAllProducts();
@@ -37,26 +41,27 @@ export default function Home({ data, size, perPage }) {
         return JSON.parse(product.body);
       });
 
-      const products = data.reduce((acc, curr) => {
+      const productsData = data.reduce((acc, curr) => {
         return acc.concat(curr);
       }, []);
 
-      const maxSize = products.length;
-
-      setProducts([
-        ...products.slice(
-          (currentPage - 1) * perPage,
-          Math.min(maxSize, perPage * currentPage)
-        ),
-      ]);
-
-      setMaxSize(maxSize);
+      const maxSize = productsData.length
+      
+      if(products){
+        setMaxSize(maxSize);
+        setProducts([
+          ...productsData.slice(
+            (currentPage - 1) * perPage,
+            Math.min(maxSize, perPage * currentPage)
+          ),
+        ]);
+      }
     };
 
     loadData();
-  }, [data, currentPage]);
+  }, []);
 
-  if (products.length == 0) return <LoaderPage text="Cargando" />;
+  if (!data || data.length == 0) return <LoaderPage text="Cargando" />;
 
   return (
     <div className={styles.container}>
@@ -117,13 +122,13 @@ export const getStaticProps = async () => {
     return acc.concat(curr);
   }, []);
 
-  const maxSize = products.length;
+  const size = products.length;
   const perPage = 12;
 
   return {
     props: {
       data: products,
-      maxSize,
+      size,
       perPage,
     }
   };
