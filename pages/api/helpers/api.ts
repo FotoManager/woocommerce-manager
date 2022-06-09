@@ -7,7 +7,7 @@ export const getAllProducts = async () => {
 
     for (let i = 1; i <= 3; i++) {
         promises.push(
-            (await fetch(`${!process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/inventory/${i}`)).json()
+            (await fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/inventory/${i}`)).json()
         );
     }
 
@@ -22,7 +22,7 @@ export const getAllProducts = async () => {
 
 export const updateProduct = (product: any, id:any) => {
 
-    return fetch(`http://localhost:3000/api/products/${id}`, {
+    return fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/products/${id}`, {
         method: 'PUT',
         body: product
     });
