@@ -1,3 +1,5 @@
+import process from 'process';
+
 export const getAllProducts = async () => {
     const promises: Promise<any>[] = [];
     // for (let i = 1; i <= 3; i++) {
