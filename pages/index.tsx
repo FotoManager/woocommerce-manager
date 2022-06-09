@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState, useMemo } from "react";
+import { getAllProducts } from "./api/helpers/api";
 import Products from "../components/Products/Products";
 import Search from "../components/Search/Search";
 import LoaderPage from "../components/loader/LoaderPage";
@@ -89,11 +90,13 @@ export default function Home({ data, maxSize, perPage }) {
 // };
 
 export const getStaticProps = async () => {
-  const productsPromises = fetch("http://localhost:3000/api/products/all");
-  const data = (await productsPromises).json();
-  const inventory = await data;
+  const productsPromises = await getAllProducts();
+  const data = (await Promise.all(productsPromises)).map( product => {
+      return JSON.parse(product.body);
+  } );
 
-  const products = inventory.reduce((acc, curr) => {
+  
+  const products = data.reduce((acc, curr) => {
     return acc.concat(curr);
   }, []);
   
