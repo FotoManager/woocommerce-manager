@@ -47,7 +47,7 @@ export default function Home({ data, size, perPage }) {
 
       const maxSize = productsData.length
       
-      if(products){
+      if(products || productsData.length != data.length){
         setMaxSize(maxSize);
         setProducts([
           ...productsData.slice(
