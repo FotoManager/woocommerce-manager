@@ -1,5 +1,5 @@
 .search{
-    width: 100%;
+    width: calc(100vw - 1.1rem);
     height: 100%;
     position: relative;
     display: flex;

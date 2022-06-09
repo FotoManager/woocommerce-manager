@@ -19,14 +19,16 @@ export default function ItemModal() {
     if (imgUpload.current.files.length > 0) {
       let file = imgUpload.current.files[0];
       let headers = {};
-      headers["Authorization"] = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsIm5hbWUiOiJKcHJpZXRvIiwiaWF0IjoxNjU0NTcxNjMwLCJleHAiOjE4MTIyNTE2MzB9.UUX7XDNpaugrkYBnQaAXtL-f3JGbfdNNqESNUKeifqQ";
-      headers["Content-Type"] = "image/jpeg";
+      
+      headers["Content-Type"] = "multipart/form-data";
       headers["Accept"] = "application/json";
       headers["Content-Disposition"] =
         "attachment; filename=" + file.name;
-       
+      axios.defaults.headers.common['Authorization'] = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsIm5hbWUiOiJKcHJpZXRvIiwiaWF0IjoxNjU0NTcxNjMwLCJleHAiOjE4MTIyNTE2MzB9.UUX7XDNpaugrkYBnQaAXtL-f3JGbfdNNqESNUKeifqQ";
+      axios.defaults.headers.post['Content-Type'] = "multipart/form-data";
+
       axios
-        .post( "https://tornicentro.com.co/wp-json/wp/v2/media/", file, headers )
+        .post( "https://tornicentro.com.co/wp-json/wp/v2/media/", file, { headers } )
         .then(function (resp) {
           console.log(resp);
         });

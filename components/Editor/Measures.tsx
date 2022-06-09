@@ -3,13 +3,15 @@ import { useRouter } from "next/router";
 import Edit from "./../../icons/edit";
 import Trash from "./../../icons/trash";
 import classes from "./measures.module.css";
+import Add from "../../icons/add";
 
 const Measure: React.FC<{
   measure: any;
   editMeasure: any;
   id: any;
   selectMeasure?: any;
-}> = ({ measure, editMeasure, id, selectMeasure }) => {
+  deleteMeasure?: any;
+}> = ({ measure, editMeasure, id, selectMeasure, deleteMeasure }) => {
   return (
     <div
       className={classes.measure}
@@ -22,7 +24,7 @@ const Measure: React.FC<{
           <strong>Medida: </strong>
           {measure}
         </span>
-        {!selectMeasure && (
+        {selectMeasure && (
           <span className={classes.actions}>
             <span
               className={classes.edit}
@@ -32,7 +34,7 @@ const Measure: React.FC<{
             >
               <Edit />
             </span>
-            <span className={classes.remove} title="delete">
+            <span className={classes.remove} title="delete" onClick={() => { deleteMeasure(id) }}>
               <Trash />
             </span>
           </span>
@@ -47,6 +49,7 @@ const Measures: React.FC<{
   updateMeasures?: any;
   selectMeasure?: any;
 }> = ({ measures, updateMeasures, selectMeasure }) => {
+  const [id, setId] = useState(null);
   const [editingMeasure, setEditingMeasure] = useState(null);
   const [newPrice, setNewPrice] = useState(null);
   const [newQuantity, setNewQuantity] = useState(null);
@@ -68,11 +71,12 @@ const Measures: React.FC<{
     element.classList.remove(classes.collapse);
   };
 
-  const handleEditMeasure = useCallback((id) => {
-    setEditingMeasure(measures[id]);
+  const handleEditMeasure = (id) => {
+    setId(measures[id]);
+    setEditingMeasure(true);
     setNewQuantity(getQuantity(measures[id]));
     setNewPrice(getPrice(measures[id]));
-  }, []);
+  };
 
   const handleSelectMeasure = (id) => {
     selectMeasure && selectMeasure(id);
@@ -99,9 +103,15 @@ const Measures: React.FC<{
 
     const measureUpdated = `$${priceUpdated}${decimal} (${newQuantity} ${quantityMessage})`;
     //console.log(measureUpdated);
-    const updatedData = measures.map((measure) =>
-      measure === editingMeasure ? measureUpdated : measure
-    );
+    let updatedData = [];
+
+    if (id) {
+      updatedData = measures.map((measure, index) =>
+        measure === id ? measureUpdated : measure
+      );
+    } else {
+      updatedData = [...measures, measureUpdated];
+    }
     //console.log(updatedData);
     updateMeasures && updateMeasures(updatedData);
     handleCloseEditor();
@@ -113,19 +123,27 @@ const Measures: React.FC<{
     return price.replace("$", "").replace(".", "");
   };
 
+  const handleDeleteMeasure = (id) => {
+    let updatedData = [];
+    updatedData = measures.filter((measure) => measure !== measures[id]);
+    updateMeasures && updateMeasures(updatedData);
+  }
+
   const getQuantity = (measure) => {
     //I have a string $price ($quantity UNIT)
     const quantity = measure.split(" ")[1];
     return quantity.replace("(", "");
   };
 
+  const handleAdd = () => {
+    setEditingMeasure(true);
+  };
+
   return (
     <>
       <div className={`${classes.measures} `}>
         <div
-          className={`${
-            measures && measures.length > 0 ? classes.container : ""
-          } mx-h-45`}
+          className={`${classes.container} mx-h-45`}
           ref={list}
           onMouseOver={handleCollapse}
           onMouseLeave={handleClose}
@@ -135,12 +153,20 @@ const Measures: React.FC<{
             measures.map((measure, index) => (
               <Measure
                 measure={measure}
-                key={index}
+                key={measures.length - index - 1}
                 id={index}
                 editMeasure={handleEditMeasure}
                 selectMeasure={handleSelectMeasure}
+                deleteMeasure={handleDeleteMeasure}
               />
             ))}
+
+          <div className={classes.add_measure} key={-1}>
+            <span>Agregar medida</span>
+            <button className={classes.add} title="add" onClick={handleAdd}>
+              <Add />
+            </button>
+          </div>
         </div>
       </div>
       {editingMeasure && (

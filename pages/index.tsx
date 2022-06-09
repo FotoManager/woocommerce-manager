@@ -6,6 +6,7 @@ import { useEffect, useState, useMemo } from "react";
 import { getAllProducts } from "./api/helpers/api";
 import Products from "../components/Products/Products";
 import Search from "../components/Search/Search";
+import LoaderPage from "../components/loader/LoaderPage";
 
 export default function Home({ data, maxSize, perPage }) {
   const [products, setProducts] = useState([]);
@@ -36,7 +37,7 @@ export default function Home({ data, maxSize, perPage }) {
     ]);
   }, [currentPage]);
 
-  if (products.length == 0) return <p>Loading... </p>;
+  if (products.length == 0 || !data) return <LoaderPage text="Cargando" />;
 
   return (
     <div className={styles.container}>

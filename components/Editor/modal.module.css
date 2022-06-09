@@ -59,3 +59,25 @@
     border: 3px double #0b1361;
     color: #0b1361;
 }
+.error {
+    background: #d47575;
+    color: rgb(151, 65, 65);
+    border: 3px double #d47575;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    
+}
+
+.error:hover{
+    border: 3px double #d47575;
+    background-color: white;
+
+}
+
+.errors {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}

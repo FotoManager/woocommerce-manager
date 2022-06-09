@@ -1,5 +1,6 @@
 import { ROUTES } from "../../../utils/config";
 import axios from "axios";
+import { AnyRecord } from "dns";
 
 export const getAllProducts = async () => {
     const promises: Promise<any>[] = [];
@@ -10,7 +11,7 @@ export const getAllProducts = async () => {
 
     for (let i = 1; i <= 3; i++) {
         promises.push(
-            (await fetch(`${process.env.API_HOST}/inventory/${i}`)).json()
+            (await fetch(`${!process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/inventory/${i}`)).json()
         );
     }
 
@@ -23,20 +24,24 @@ export const getAllProducts = async () => {
     return promises;
 }
 
-export const updateProduct = (product: any) => {
-    fetch(`${process.env.API_HOST}/products/${product.id}`, {
+export const updateProduct = (product: any, id:any) => {
+
+    return fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/products/${id}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            //cors
-            'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ product })
+        body: product
+    });
+}
+
+export const createProduct = (product: any) => {
+
+    return fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/products/`, {
+        method: 'POST',
+        body: product
     });
 }
 
 export const updateVariation = (parentId:any, product: any) => {
-    fetch(`${process.env.API_HOST}/products/${parentId}/variation/${product.id}`, {
+    return fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/products/${parentId}/variation/${product.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
