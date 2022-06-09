@@ -21,7 +21,7 @@ export const getAllProducts = async () => {
 }
 
 export const updateProduct = (product: any, id:any) => {
-
+    console.log("Route: ", process.env.API_HOST);
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"}/products/${id}`, {
         method: 'PUT',
         body: product
