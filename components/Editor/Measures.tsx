@@ -73,7 +73,7 @@ const Measures: React.FC<{
 
   const handleEditMeasure = (id) => {
     setId(measures[id]);
-    setEditingMeasure(true);
+    setEditingMeasure("true");
     setNewQuantity(getQuantity(measures[id]));
     setNewPrice(getPrice(measures[id]));
   };
@@ -136,7 +136,7 @@ const Measures: React.FC<{
   };
 
   const handleAdd = () => {
-    setEditingMeasure(true);
+    setEditingMeasure("true");
   };
 
   return (
