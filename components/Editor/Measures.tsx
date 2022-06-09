@@ -52,7 +52,7 @@ const Measures: React.FC<{
   const [id, setId] = useState("");
   const [editingMeasure, setEditingMeasure] = useState("");
   const [newPrice, setNewPrice] = useState("");
-  const [newQuantity, setNewQuantity] = useState("");
+  const [newQuantity, setNewQuantity] = useState(0);
 
   const list = useRef(null);
 
