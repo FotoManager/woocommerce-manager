@@ -89,7 +89,7 @@ export default function Home({ data, maxSize, perPage }) {
 //   };
 // };
 
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
   const productsPromises = await getAllProducts();
   const data = (await Promise.all(productsPromises)).map( product => {
       return JSON.parse(product.body);
