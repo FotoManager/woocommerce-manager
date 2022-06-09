@@ -189,7 +189,7 @@ const Measures: React.FC<{
                   type="number"
                   min="1"
                   value={newQuantity}
-                  onChange={(e) => setNewQuantity(e.target.value)}
+                  onChange={(e) => setNewQuantity(parseInt(e.target.value))}
                 />
               </label>
             </div>
