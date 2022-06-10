@@ -244,7 +244,7 @@ const Product = ({ validCategories, attributes }) => {
 export default Product;
 
 export const getServerSideProps: GetStaticProps = async (context) => {
-  const { id } = context.query;
+  const { id } = context.params;
 
   const validCategories = await (
     await fetch(
