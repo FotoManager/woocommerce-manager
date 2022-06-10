@@ -64,7 +64,8 @@ const Product = ({ validCategories }) => {
     if (!stock) errors["stock"] = "El stock es requerido";
     if (!descriptionContent) errors["description"] = "La descripcion es requerida";
     if (!listCategories.length) errors["categories"] = "Las categorias son requeridas";
-    // if (!measures.length) errors["measures"] = "Las medidas son requeridas";
+    if (!measures.length) errors["measures"] = "Las medidas son requeridas";
+
     setErrors(errors);
     if (Object.keys(errors).length) setShowErrors(true);
     return Object.keys(errors).length === 0;
@@ -84,6 +85,7 @@ const Product = ({ validCategories }) => {
     createdProduct.append("stock_quantity", stock);
     createdProduct.append("manage_stock", "true");
     createdProduct.append("description", descriptionContent);
+    createdProduct.append("attributes", JSON.stringify(measures));
 
     if (img !== "") createdProduct.append("images", imgUpload.current.files[0]);
 
@@ -193,12 +195,12 @@ const Product = ({ validCategories }) => {
               </div>
             </div>
 
-            {/* <div className={classes.measures}>
+            <div className={classes.measures}>
               <div className={classes.col_1}>Medidas</div>
               <div className={`${classes.col_2} mx-h-45`}>
                 <Measures measures={measures} updateMeasures={setMeasures} />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
         <div className={classes.actions}>
