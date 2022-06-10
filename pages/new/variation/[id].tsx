@@ -107,6 +107,17 @@ const Product = ({ validCategories, attributes }) => {
     return response ? handleSave() : setShowConfirmation(false);
   }
 
+  const selectMeasure = (id) => {
+    const newData = [measures[id]];
+    
+    for(let i = 0; i < measures.length; i++){
+        if(i !== id){
+            newData.push(measures[i])
+        }
+    }
+    setMeasures(newData);
+  }
+
   if (loading) return <LoaderPage text={"Creando producto"} />;
 
   return (
@@ -204,7 +215,7 @@ const Product = ({ validCategories, attributes }) => {
             <div className={classes.measures}>
               <div className={classes.col_1}>Medidas</div>
               <div className={`${classes.col_2} mx-h-45`}>
-                <Measures measures={measures} updateMeasures={setMeasures} />
+                <Measures measures={measures} updateMeasures={setMeasures} selectMeasure={selectMeasure}/>
               </div>
             </div>
           </div>
