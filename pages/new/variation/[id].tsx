@@ -14,8 +14,10 @@ import LoaderPage from "../../../components/loader/LoaderPage";
 import ModalErrors from "../../../components/Editor/ModalErrors";
 import ModalConfirmation from "../../../components/Confirmation/Confirmation";
 
-const Product = ({ validCategories }) => {
+const Product = ({ validCategories, attributes }) => {
   if (!validCategories) return <LoaderPage text={"Cargando"} />;
+
+  const { options } = attributes[0] || {};
 
   const [priceValue, setPriceValue] = useState("");
   const [title, setTitle] = useState("");
@@ -24,7 +26,7 @@ const Product = ({ validCategories }) => {
   const [listCategories, setListCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState(false);
   const [onSale, setOnSale] = useState(false);
-  const [measures, setMeasures] = useState([]);
+  const [measures, setMeasures] = useState(options);
   const imgUpload = useRef(null);
   const [img, setImg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -242,6 +244,8 @@ const Product = ({ validCategories }) => {
 export default Product;
 
 export const getServerSideProps: GetStaticProps = async (context) => {
+  const { id } = context.query;
+
   const validCategories = await (
     await fetch(
       `${
@@ -250,9 +254,18 @@ export const getServerSideProps: GetStaticProps = async (context) => {
     )
   ).json();
 
+  const attributes = await (
+    await fetch(
+      `${
+        process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"
+      }/product/attributes/${id}`
+    )
+  ).json();
+
   return {
     props: {
       validCategories,
+      attributes
     },
   };
 };

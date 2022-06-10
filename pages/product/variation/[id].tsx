@@ -56,7 +56,7 @@ const Product = ({ product, validCategories, attributes }) => {
       id,
       name: title,
       categories: listCategories,
-      attributes: [ { ...product.attributes[0], option: measures[0] || ""} ],
+      attributes: [ { ...attributes[0], option: measures[0] || ""} ],
       regular_price: priceValue,
       on_stock: onSale,
       stock_quantity: stock,
