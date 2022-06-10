@@ -85,7 +85,11 @@ const Product = ({ validCategories }) => {
     createdProduct.append("stock_quantity", stock);
     createdProduct.append("manage_stock", "true");
     createdProduct.append("description", descriptionContent);
-    createdProduct.append("attributes", JSON.stringify(measures));
+    createdProduct.append("attributes", JSON.stringify({
+      id: 0,
+      name: "Cantidad",
+      option: measures[0] || "",
+    }));
 
     if (img !== "") createdProduct.append("images", imgUpload.current.files[0]);
 
