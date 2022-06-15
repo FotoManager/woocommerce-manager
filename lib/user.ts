@@ -44,6 +44,7 @@ export async function findUser({ username }:{ username: string }) {
             hash: string;
             salt: string | null;
         }
+        console.log(process.env.API_HOST)
         //Use api to find user
         const response = await axios.get(`${process.env.API_HOST}/db/user/${username}`);
         // return response.data;
