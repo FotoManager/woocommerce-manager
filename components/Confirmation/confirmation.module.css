@@ -66,7 +66,18 @@
     padding: 10px;
     cursor: pointer;
     border-radius: 5px;
-    
+    animation: append-animate .3s linear;
+}
+
+@keyframes append-animate {
+	from {
+        height: 0px;
+		opacity: 0;
+	}
+	to {
+		height: 19px;
+		opacity: 1;	
+	}
 }
 
 .error:hover{
@@ -80,4 +91,38 @@
     flex-direction: column;
     gap: 10px;
 
+}
+
+.modal_input{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.modal_input input{
+    box-sizing: border-box;
+    padding: 8px 14px;
+    font-style: italic;
+    outline: none;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.msg_command{
+    display: flex;
+    gap: 4px;
+    width: 100%;
+}
+
+.command{
+    font-weight: bold;
+    font-style: italic;
+}
+
+.modal_body{
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
 }

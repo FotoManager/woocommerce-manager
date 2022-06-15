@@ -8,6 +8,25 @@ import Products from "../components/Products/Products";
 import Search from "../components/Search/Search";
 import LoaderPage from "../components/loader/LoaderPage";
 import useSWR, { SWRConfig } from "swr";
+import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
+import { useRouter } from "next/router";
+import Header from "../components/Header/Header";
+
+const ViewerQuery = gql`
+  query ViewerQuery {
+    viewer {
+      username
+      name
+      lastname
+    }
+  }
+`;
+
+const SignOutMutation = gql`
+  mutation SignOutMutation{
+    signOut
+  }
+`;
 
 const fetcher = async (url) => {
   const productsPromises = await getAllProducts();
@@ -22,11 +41,12 @@ const fetcher = async (url) => {
   return products;
 }
 
-function Inventory({ perPage }){
+function Inventory({ perPage , actions }){
 
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const { data, error } = useSWR("/api/products/all", fetcher);
+  const { viewer, handleLogout } = actions;
 
   const searchedProducts = useMemo(() => {
     if(!data) return [];
@@ -55,6 +75,7 @@ function Inventory({ perPage }){
       </Head>
 
       <main className={styles.main}>
+        <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
         <Search updateSearch={(search) => setSearch(search)} />
         <Products products={searchedProducts} />
       </main>
@@ -77,9 +98,40 @@ function Inventory({ perPage }){
 }
 
 export default function Home({ fallback, perPage }) {
+
+    const { data, loading, error } = useQuery(ViewerQuery);
+    const { viewer } = data || {};
+    const shouldRedirect = !(loading || error || viewer);
+    const client = useApolloClient()
+    const router = useRouter();
+    const [signOut] = useMutation(SignOutMutation);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  if(loading || !viewer) {
+    return <LoaderPage text={"Cargando"} />
+  }
+
+  const handleLogout = async () => {
+    try{
+      signOut().then(() => {
+        client.resetStore().then(() => {
+          router.push("/login");
+        });
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
+
   return ( 
     <SWRConfig value={{ fallback }}>
-      <Inventory perPage={perPage}/>
+      <Inventory perPage={perPage} actions={{ handleLogout, viewer }}/>
     </SWRConfig>)
 }
 

@@ -2,7 +2,7 @@
 import { GetStaticProps } from "next";
 import dynamic from 'next/dynamic'
 import classes from "./../../styles/product.module.css";
-import { useRef, useState, Suspense } from "react";
+import { useRef, useState, Suspense, useEffect } from "react";
 import Add from "../../icons/add";
 import Category from "../../components/Editor/Category";
 import ModalCategories from "../../components/Editor/ModalCategories";
@@ -12,10 +12,29 @@ import Measures from "../../components/Editor/Measures";
 import Checkbox from "../../components/Editor/Checkbox";
 import LoaderPage from "../../components/loader/LoaderPage";
 import ModalConfirmation from "../../components/Confirmation/Confirmation";
+import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
+import { useRouter } from "next/router";
+import Header from "../../components/Header/Header";
 
 //Lazy import of Variations
 const Variations = dynamic(() => import("../../components/Editor/Variations"));
 
+
+const ViewerQuery = gql`
+  query ViewerQuery {
+    viewer {
+      username
+      name
+      lastname
+    }
+  }
+`;
+
+const SignOutMutation = gql`
+  mutation SignOutMutation{
+    signOut
+  }
+`;
 
 const Product = ({ product, validCategories }) => {
   if (!product || !product.found)  
@@ -198,13 +217,53 @@ const Product = ({ product, validCategories }) => {
         {showConfirmation && ( <ModalConfirmation
           messageModal={"¿Estás seguro de actualizar este producto?"}
           confirmResponse={handlerResponse}
+          command={"UPDATE"}
         /> )}
       </main>
     </div>
   );
 };
  
-export default Product;
+const Wrapper = ({ product, validCategories }) => {
+  const { data, loading, error } = useQuery(ViewerQuery);
+    const { viewer } = data || {};
+    const shouldRedirect = !(loading || error || viewer);
+    const client = useApolloClient()
+    const router = useRouter();
+    const [signOut] = useMutation(SignOutMutation);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  if(loading || !viewer) {
+    return <LoaderPage text={"Cargando"} />
+  }
+
+  const handleLogout = async () => {
+    try{
+      signOut().then(() => {
+        client.resetStore().then(() => {
+          router.push("/login");
+        });
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  return (
+    <>
+      <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
+      <Product validCategories={validCategories} product={product}/>
+    </>
+  );
+}
+
+export default Wrapper;
 
 export const getServerSideProps: GetStaticProps = async (context) => {
   const { id } = context.params;

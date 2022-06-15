@@ -2,7 +2,7 @@
 import { GetStaticProps } from "next";
 import dynamic from 'next/dynamic'
 import classes from "./../../../styles/product.module.css";
-import {  useState, Suspense } from "react";
+import {  useState, useEffect, Fragment } from "react";
 import Add from "../../../icons/add";
 import Category from "../../../components/Editor/Category";
 import ModalCategories from "../../../components/Editor/ModalCategories";
@@ -10,9 +10,30 @@ import { updateVariation } from "./../../api/helpers/api";
 //import Variations from "../../components/Editor/Variations";
 import Measures from "../../../components/Editor/Measures";
 import Checkbox from "../../../components/Editor/Checkbox";
+import ModalConfirmation from "../../../components/Confirmation/Confirmation";
+import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
+import { useRouter } from "next/router";
+import Header from "../../../components/Header/Header";
+import LoaderPage from "../../../components/loader/LoaderPage";
+
+const ViewerQuery = gql`
+  query ViewerQuery {
+    viewer {
+      username
+      name
+      lastname
+    }
+  }
+`;
+
+const SignOutMutation = gql`
+  mutation SignOutMutation{
+    signOut
+  }
+`;
 
 const Product = ({ product, validCategories, attributes }) => {
-  if (!product || !product.found) return <p>Loading...</p>;
+  if (!product || !product.found) return <LoaderPage text={"Cargando variacion"} />
 
   const {
     id,
@@ -35,6 +56,8 @@ const Product = ({ product, validCategories, attributes }) => {
   const [openCategories, setOpenCategories] = useState(false);
   const [onSale, setOnSale] = useState(on_sale);
   const [measures, setMeasures] = useState(options);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [loading, setLoading] = useState(false);
   
   const addCategory = (category) => {
     setListCategories([...listCategories, category]);
@@ -51,7 +74,7 @@ const Product = ({ product, validCategories, attributes }) => {
   }
 
   const handleSave = () => {
-
+    setLoading(true);
     const updatedProduct = {
       id,
       name: title,
@@ -63,7 +86,11 @@ const Product = ({ product, validCategories, attributes }) => {
       description: descriptionContent,
     };
     console.log(product, updatedProduct)
-    updateVariation(product.parent_id, updatedProduct)
+    updateVariation(product.parent_id, updatedProduct).then(
+      () => {
+        setLoading(false);
+      }
+    )
   }
 
   const selectMeasure = (id) => {
@@ -76,6 +103,12 @@ const Product = ({ product, validCategories, attributes }) => {
     }
     setMeasures(newData);
   }
+
+  const handlerResponse = (response: boolean) => {
+    return response ? handleSave() : setShowConfirmation(false);
+  }
+
+  if(loading) return <LoaderPage text={"Actualizando variacion"} />
 
   return (
     <div className={classes.container}>
@@ -153,15 +186,62 @@ const Product = ({ product, validCategories, attributes }) => {
           </div>
         </div>
         <div className={classes.actions}>
-          <button className={classes.save} onClick={handleSave}>Guardar</button>
+          <button className={classes.save} onClick={() => {
+            setShowConfirmation(true);
+          }}>Guardar</button>
         </div>
         { openCategories && <ModalCategories setCategories={addCategory} closeModal={() => setOpenCategories(false)} categories={listCategories} useCategories={validCategories}/> }
+        {showConfirmation && ( <ModalConfirmation
+          messageModal={"¿Estás seguro de actualizar esta variación?"}
+          confirmResponse={handlerResponse}
+          command={"UPDATE"}
+        /> )}
+      
       </main>
     </div>
   );
 };
  
-export default Product;
+const Wrapper = ({ product, attributes, validCategories }) => {
+  const { data, loading, error } = useQuery(ViewerQuery);
+    const { viewer } = data || {};
+    const shouldRedirect = !(loading || error || viewer);
+    const client = useApolloClient()
+    const router = useRouter();
+    const [signOut] = useMutation(SignOutMutation);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  if(loading || !viewer) {
+    return <LoaderPage text={"Cargando"} />
+  }
+
+  const handleLogout = async () => {
+    try{
+      signOut().then(() => {
+        client.resetStore().then(() => {
+          router.push("/login");
+        });
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  return (
+    <Fragment>
+      <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
+      <Product validCategories={validCategories} product={product} attributes={attributes}/>
+    </Fragment>
+  );
+}
+
+export default Wrapper;
 
 export const getServerSideProps: GetStaticProps = async (context) => {
   const { id } = context.params;

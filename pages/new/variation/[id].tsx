@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps } from "next";
-import { useRouter } from "next/router";
 import classes from "./../../../styles/product.module.css";
-import { useRef, useState, Suspense } from "react";
+import { useRef, useState, useEffect } from "react";
 import Add from "../../../icons/add";
 import Category from "../../../components/Editor/Category";
 import ModalCategories from "../../../components/Editor/ModalCategories";
@@ -13,6 +12,27 @@ import Checkbox from "../../../components/Editor/Checkbox";
 import LoaderPage from "../../../components/loader/LoaderPage";
 import ModalErrors from "../../../components/Editor/ModalErrors";
 import ModalConfirmation from "../../../components/Confirmation/Confirmation";
+
+import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
+import { useRouter } from "next/router";
+import Header from "../../../components/Header/Header";
+
+const ViewerQuery = gql`
+  query ViewerQuery {
+    viewer {
+      username
+      name
+      lastname
+    }
+  }
+`;
+
+const SignOutMutation = gql`
+  mutation SignOutMutation{
+    signOut
+  }
+`;
+
 
 const Product = ({ validCategories, attributes }) => {
   if (!validCategories) return <LoaderPage text={"Cargando"} />;
@@ -74,7 +94,7 @@ const Product = ({ validCategories, attributes }) => {
   }
 
   const handleSave = () => {
-    if(!validate()) return;
+    
     let parentId = router.query.id;
 
     if(typeof parentId === "object")  parentId = parentId[0];
@@ -222,7 +242,7 @@ const Product = ({ validCategories, attributes }) => {
         </div>
         <div className={classes.actions}>
           <button className={classes.save} onClick={() => {
-            setShowConfirmation(true);
+             if(validate()) setShowConfirmation(true);
           }}>
             Guardar
           </button>
@@ -246,13 +266,53 @@ const Product = ({ validCategories, attributes }) => {
         {showConfirmation && ( <ModalConfirmation
           messageModal={"¿Estás seguro de crear este nuevo producto?"}
           confirmResponse={handlerResponse}
+          command={"CREATE"}
         /> )}
       </main>
     </div>
   );
 };
 
-export default Product;
+const Wrapper = ({ validCategories, attributes }) => {
+  const { data, loading, error } = useQuery(ViewerQuery);
+    const { viewer } = data || {};
+    const shouldRedirect = !(loading || error || viewer);
+    const client = useApolloClient()
+    const router = useRouter();
+    const [signOut] = useMutation(SignOutMutation);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  if(loading || !viewer) {
+    return <LoaderPage text={"Cargando"} />
+  }
+
+  const handleLogout = async () => {
+    try{
+      signOut().then(() => {
+        client.resetStore().then(() => {
+          router.push("/login");
+        });
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  return (
+    <>
+      <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
+      <Product validCategories={validCategories} attributes={attributes}/>
+    </>
+  );
+}
+
+export default Wrapper;
 
 export const getServerSideProps: GetStaticProps = async (context) => {
   const { id } = context.params;

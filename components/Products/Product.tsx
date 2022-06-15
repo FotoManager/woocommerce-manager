@@ -10,7 +10,7 @@ export const Product = ({ product }) => {
     const handleClick = (event) => {
         event.preventDefault();
         const product = event.target.getAttribute("data-product-id");
-        router.push(`/product/${product}`);
+        router.push(`/product/${product}`, null, { shallow: true });
     }
 
     return (
