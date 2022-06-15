@@ -51,6 +51,7 @@ const Product = ({ validCategories }) => {
   const [errors, setErrors] = useState({});
   const [showErrors, setShowErrors] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [sku, setSKU] = useState("");
 
   const previewImage = () => {
     const oFReader = new FileReader();
@@ -73,16 +74,20 @@ const Product = ({ validCategories }) => {
   const updateSale = () => {
     setOnSale(!onSale);
   };
-
+  
   const validate = () => {
     const errors = {};
     if(!img) errors["img"] = "Debe seleccionar una imagen";
     if (!title) errors["title"] = "El titulo es requerido";
-    if (!priceValue) errors["price"] = "El precio es requerido";
+    if (!priceValue){
+      const hasCategory = listCategories.find((cat) => cat.id === 83 || cat.id === 101);
+      if (hasCategory) errors["price"] = "Debe ingresar un precio.";
+    }
     if (!stock) errors["stock"] = "El stock es requerido";
     if (!descriptionContent) errors["description"] = "La descripcion es requerida";
     if (!listCategories.length) errors["categories"] = "Las categorias son requeridas";
-    if (!measures.length) errors["measures"] = "Las medidas son requeridas";
+    if(!sku) errors["sku"] = "El sku es requerido";
+
     setErrors(errors);
     if (Object.keys(errors).length) setShowErrors(true);
     return Object.keys(errors).length === 0;
@@ -90,12 +95,10 @@ const Product = ({ validCategories }) => {
 
   const handleSave = () => {
     const createdProduct = new FormData();
+    
+    createdProduct.append("sku", sku);
     createdProduct.append("name", title);
     createdProduct.append("categories", JSON.stringify(listCategories));
-    createdProduct.append(
-      "attributes",
-      JSON.stringify([{id:0, name: "Cantidad", options: measures, position: 0, variation: true, visible: true}])
-    );
     createdProduct.append("regular_price", priceValue);
     createdProduct.append("on_stock", onSale.toString());
     createdProduct.append("stock_quantity", stock);
@@ -103,6 +106,12 @@ const Product = ({ validCategories }) => {
     createdProduct.append("description", descriptionContent);
     createdProduct.append("type", measures.length === 0 ? "simple" : "variable");
 
+    if(measures.length > 0){
+      createdProduct.append(
+        "attributes",
+        JSON.stringify([{id:0, name: "Cantidad", options: measures, position: 0, variation: true, visible: true}])
+      );
+    }
     if (img !== "") createdProduct.append("images", imgUpload.current.files[0]);
 
     setLoading(true);
@@ -137,6 +146,18 @@ const Product = ({ validCategories }) => {
             </label>
           </div>
           <div className={classes.content}>
+            <div className={classes.sku}>
+              <div className={classes.col_1}>SKU</div>
+              <div className={classes.col_2}>
+                <input
+                  type="text"
+                  value={sku}
+                  name="sku"
+                  onChange={(event) => setSKU(event.target.value)}
+                />
+              </div>
+            </div>
+            
             <div className={classes.title}>
               <div className={classes.col_1}>Nombre de producto</div>
               <div className={classes.col_2}>
@@ -148,6 +169,7 @@ const Product = ({ validCategories }) => {
                 />
               </div>
             </div>
+
             <div className={classes.description}>
               <div className={classes.col_1}>Descripcion</div>
               <div className={classes.col_2}>

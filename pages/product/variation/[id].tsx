@@ -84,6 +84,7 @@ const Product = ({ product, validCategories, attributes }) => {
       on_stock: onSale,
       stock_quantity: stock,
       description: descriptionContent,
+      manage_stock: "parent"
     };
     console.log(product, updatedProduct)
     updateVariation(product.parent_id, updatedProduct).then(

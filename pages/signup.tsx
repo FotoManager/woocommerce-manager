@@ -1,34 +1,49 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import Head from "next/head";
 import classes from "./../styles/Signup.module.css";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { getErrorMessage } from "../lib/form";
+import LoaderPage from "../components/loader/LoaderPage";
+import Header from "../components/Header/Header";
+
+const ViewerQuery = gql`
+  query ViewerQuery {
+    viewer {
+      username
+      name
+      lastname
+    }
+  }
+`;
+
+const SignOutMutation = gql`
+  mutation SignOutMutation{
+    signOut
+  }
+`;
 
 const SignUpMutation = gql`
   mutation SignUpMutation(
     $username: String!
     $password: String!
     $name: String!
-    $last_name: String!
-    $email: String!
+    $lastname: String!
   ) {
     signUp(
       input: {
         username: $username
         password: $password
-        last_name: $last_name
+        lastname: $lastname
         name: $name
-        email: $email
       }
     ) {
       user {
-        user_name
+        username
         name
-        last_name
-        email
+        lastname
       }
     }
   }
@@ -42,7 +57,7 @@ interface ErrorMessage {
   response?: string;
 }
 
-export default function SignUp() {
+function SignUp({ viewer, handleLogout }) {
   const [signUp] = useMutation(SignUpMutation);
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
   const [loading, setLoading] = useState(false);
@@ -58,50 +73,26 @@ export default function SignUp() {
     const nameElement = elements.namedItem("name") as HTMLInputElement;
     const lastnameElement = elements.namedItem("last_name") as HTMLInputElement;
 
-    const validations: {[key: string]: string} = {};
-
-    const username = usernameElement.value;
-    const password = passwordElement.value;
-    const name = nameElement.value;
-    const lastname = lastnameElement.value;
-
-    //Math username only accept letters and numbers
-    const usernameRegex = /^[a-zA-Z0-9]+$/;
-    if (!usernameRegex.test(username)) 
-      validations["username"] = "Username must only contain letters and numbers";
-    
-    const nameRegex = /^[a-zA-Z]+$/;
-    if (!nameRegex.test(name))
-      validations["name"] = "Name must only contain letters";
-    if(!nameRegex.test(lastname))
-      validations["lastname"] = "Last name must only contain letters";
-
-    //Password must have one symbol, one uppercase letter and numbers 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-
-    if (!passwordRegex.test(password))
-      validations["password"] = "Password must have at least 8 characters, one uppercase letter and one symbol";
-
-    if(Object.keys(validations).length > 0) {
-      setErrorMsg({ ...validations });
-      return;
-    }
-
     try {
       setLoading(true);
+      console.log({
+        variables: {
+          username: usernameElement.value,
+          password: passwordElement.value,
+          name: nameElement.value,
+          lastname: lastnameElement.value
+        },
+      })
       const response = await signUp({
         variables: {
           username: usernameElement.value,
           password: passwordElement.value,
           name: nameElement.value,
-          last_name: lastnameElement.value,
-          email: "",
+          lastname: lastnameElement.value
         },
       });
 
       if (response.data.signUp.user) {
-        router.push("/login");
-        console.log("User created: ", response.data.signUp.user);
         setLoading(false);
         return;
       }else{
@@ -115,69 +106,26 @@ export default function SignUp() {
       setErrorMsg({ response: getErrorMessage(error) });
     }
   };
-  console.log(errorMsg);
+  
+  if(loading) {
+    return <LoaderPage text="Creando usuario"/>;
+  }
+
   return (
     <Fragment>
       <Head>
-        <title>Sign Up | Dynamic Programming Coders</title>
-
-        <meta
-          name="description"
-          content="Sign up for the Dynamic Programming Coders platform."
-        />
-        <meta
-          name="keywords"
-          content="sign up, platform, dynamic programming coders, competitive programming, register"
-        />
-        <meta name="robots" content="index, follow" />
-
-        <meta
-          property="og:title"
-          content="Sign Up | Dynamic Programming Coders"
-        />
-        <meta
-          property="og:description"
-          content="Sign up for the Dynamic Programming Coders platform."
-        />
-
-        {/* <meta property="og:image" content="https://dynamicprogrammingcoders.com/static/images/logo.png" />
-            <meta property="og:url" content="https://dynamicprogrammingcoders.com/signup" /> */}
-        <meta property="og:site_name" content="Dynamic Programming Coders" />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:locale:alternate" content="en_US" />
-        <meta
-          name="twitter:title"
-          content="Sign Up | Dynamic Programming Coders"
-        />
-        <meta
-          name="twitter:description"
-          content="Sign up for the Dynamic Programming Coders platform."
-        />
-        {/* <meta name="twitter:image" content="https://dynamicprogrammingcoders.com/static/images/logo.png" />
-            <meta name="twitter:url" content="https://dynamicprogrammingcoders.com/signup" /> */}
-        <meta name="twitter:site" content="@DynamicProgrammingCoders" />
-        <meta name="twitter:card" content="summary_large_image" />
-
-        <link
-          rel="canonical"
-          href="https://dynamicprogrammingcoders.com/signup"
-        />
-        <link
-          rel="alternate"
-          hrefLang="en-US"
-          href="https://dynamicprogrammingcoders.com/signup"
-        />
+        <title>Sign Up | Tornicentro</title>
       </Head>
       <main className={classes.main}>
+        <Header name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
         <div className={classes.container}>
           <div className={classes.signup}>
             <div className={classes.content}>
               <div className={classes.title}>
-                <h2>Sign Up!</h2>
+                <h2>Registro</h2>
               </div>
               <div className={classes.description}>
-                Sign up for the Dynamic Programming Coders platform.
+                Crea una cuenta para darle permisos a un usuario.
               </div>
               {
                 errorMsg.response && (
@@ -190,39 +138,25 @@ export default function SignUp() {
             <div className={classes.form}>
               <form onSubmit={handleSubmit} className={classes.form}>
                 <div className={classes.form_input}>
-                  <label htmlFor="name">Name</label>
+                  <label htmlFor="name">Nombre</label>
                   <input
                     type="text"
                     name="name"
                     required={true}
-                    placeholder="Name"
+                    placeholder="Nombre"
                     autoComplete="off"
                   />
-                  {
-                    errorMsg.name && (
-                      <div className={classes.error}>
-                        {errorMsg.name}
-                      </div>
-                    )
-                  }
                 </div>
 
                 <div className={classes.form_input}>
-                  <label htmlFor="last_name">Last name</label>
+                  <label htmlFor="last_name">Apellido</label>
                   <input
                     type="text"
                     name="last_name"
                     required={true}
-                    placeholder="Last name"
+                    placeholder="Apellido"
                     autoComplete="off"
                   />
-                  {
-                    errorMsg.lastname && (
-                      <div className={classes.error}>
-                        {errorMsg.lastname}
-                      </div>
-                    )
-                  }
                 </div>
                 <div className={classes.form_input}>
                   <label htmlFor="username">Username</label>
@@ -230,45 +164,25 @@ export default function SignUp() {
                     type="text"
                     name="username"
                     required={true}
-                    placeholder="Username"
+                    placeholder="Usuario"
                     autoComplete="off"
                   />
-                  {
-                    errorMsg.username && (
-                      <div className={classes.error}>
-                        {errorMsg.username}
-                      </div>
-                    )
-                  }
                 </div>
                 <div className={classes.form_input}>
-                  <label htmlFor="password">Password</label>
+                  <label htmlFor="password">Contraseña</label>
                   <input
                     type="password"
                     name="password"
                     required={true}
-                    placeholder="Password"
+                    placeholder="Clave"
                     autoComplete="off"
                   />
-                  {
-                    errorMsg.password && (
-                      <div className={classes.error}>
-                        {errorMsg.password}
-                      </div>
-                    )
-                  }
-                </div>
-                
-                <div className={classes.form_input}>
-                  <Link href="/login">
-                    <a>Already have an account?</a>
-                  </Link>
                 </div>
 
                 <div className={classes.form_submit}>
                   <div className={classes.button_box}>
                     <button type="submit" title="Sign Up">
-                      <span>Sign Up</span>
+                      <span>Crear</span>
                     </button>
                   </div>
                 </div>
@@ -279,4 +193,39 @@ export default function SignUp() {
       </main>
     </Fragment>
   );
+}
+
+
+export default function Wrapper(){
+  const { data, loading, error } = useQuery(ViewerQuery);
+    const { viewer } = data || {};
+    const shouldRedirect = !(loading || error || viewer);
+    const client = useApolloClient()
+    const router = useRouter();
+    const [signOut] = useMutation(SignOutMutation);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push("/login", "/login", { shallow: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  if(loading || !viewer) {
+    return <LoaderPage text={"Cargando"} />
+  }
+
+  const handleLogout = async () => {
+    try{
+      signOut().then(() => {
+        client.resetStore().then(() => {
+          router.push("/login");
+        });
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  return <SignUp viewer={viewer} handleLogout={handleLogout} />
 }

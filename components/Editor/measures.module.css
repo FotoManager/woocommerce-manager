@@ -159,23 +159,24 @@
 }
 
 .modal_body .input:first-child::before{
-    content: "$";
+    content: "Medida";
     padding: .5rem;
     background-color: #0b1361;
     color: white;
     
 }
 
-.modal_body .input:last-child::after{
+/* .modal_body .input:last-child::after{
     content: "Unidad/es";
     padding: .5rem;
     background-color: #0b1361;
     color: white;
     
-}
+} */
 
 .input:last-child input {
     text-align: right;
+    padding-right: 1rem;
 }
 
 .modal_actions {

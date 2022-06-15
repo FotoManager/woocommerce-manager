@@ -86,21 +86,47 @@
 
 .categories {
     flex: 1 1 350px;
+    order: 3;
 }
 
 .price{
     flex: 1 1 200px;
+    order: 4;
 }
 
 .sale{
     flex: 1 1 50%;
+    order: 5;
 }
 
 .stock {
     flex: 1 1 50%;
+    order: 6;
 }
 
-.measures, .title, .variations, .description {
+.sku{
+    flex: 1 1 30%;
+    order: 1;
+}
+
+.title{
+    flex: 1 1 70%;
+    order: 0;
+}
+
+.description{
+    order: 2;
+}
+
+.variations{
+    order: 8;
+}
+
+.measures{
+    order: 7;
+}
+
+.measures, .variations, .description {
     flex: 1 1 100%;
 }
 
@@ -219,11 +245,22 @@
         max-width: 250px;
     }
 
+    .title{
+        flex: 1 1 100%;
+        order: 1;
+    }
+
+    .sku{
+        flex: 1 1 100%;
+        order: 0;
+    }
 
 }
 
 .actions {
     padding: 1rem 0;
+    display: flex;
+    gap: 1rem;
 }
 
 .actions .save {

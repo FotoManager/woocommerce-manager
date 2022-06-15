@@ -3,25 +3,25 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import axios from 'axios';
 
-export async function createUser({ username, password, name, last_name, email }: { username: string, password: string, name: string, last_name: string, email: string }) {
+export async function createUser({ username, password, name, lastname }: { username: string, password: string, name: string, lastname: string }) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto
         .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
         .toString('hex');
     const user = {
-        //id: uuidv4(),
+        user_id: uuidv4(),
         //createdAt: moment().format( 'YYYY-MM-DD HH:mm:ss'),
-        user_name: username,
-        password: hash,
-        email: salt,
-        name: name,
-        last_name: last_name,
+        username,
+        hash,
+        salt,
+        name,
+        lastname,
         //typeUser,
     };
     //print user
     try {
        //Use API to create user
-        const response = await axios.post(`${process.env.API_HOST}/user/create`, user);
+        const response = await axios.post(`${process.env.API_HOST}/db/new/user`, user);
         //Cors
         response.headers['Access-Control-Allow-Origin'] = '*'; 
         response.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
@@ -44,7 +44,6 @@ export async function findUser({ username }:{ username: string }) {
             hash: string;
             salt: string | null;
         }
-        console.log(process.env.API_HOST)
         //Use api to find user
         const response = await axios.get(`${process.env.API_HOST}/db/user/${username}`);
         // return response.data;

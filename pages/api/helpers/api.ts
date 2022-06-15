@@ -56,3 +56,9 @@ export const updateVariation = (parentId:any, product: any) => {
         body: JSON.stringify({ product })
     });
 }
+
+export const deleteProduct = (id:any) => {
+    return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/product/${id}`, {
+        method: 'DELETE'
+    });
+}

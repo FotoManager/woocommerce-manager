@@ -82,7 +82,10 @@ const Product = ({ validCategories, attributes }) => {
     const errors = {};
     if(!img) errors["img"] = "Debe seleccionar una imagen";
     if (!title) errors["title"] = "El titulo es requerido";
-    if (!priceValue) errors["price"] = "El precio es requerido";
+    if (!priceValue){
+      const hasCategory = listCategories.find((cat) => cat.id === 83 || cat.id === 101);
+      if (hasCategory) errors["price"] = "Debe ingresar un precio.";
+    }
     if (!stock) errors["stock"] = "El stock es requerido";
     if (!descriptionContent) errors["description"] = "La descripcion es requerida";
     if (!listCategories.length) errors["categories"] = "Las categorias son requeridas";
@@ -105,7 +108,7 @@ const Product = ({ validCategories, attributes }) => {
     createdProduct.append("regular_price", priceValue);
     createdProduct.append("on_stock", onSale.toString());
     createdProduct.append("stock_quantity", stock);
-    createdProduct.append("manage_stock", "true");
+    createdProduct.append("manage_stock", "parent");
     createdProduct.append("description", descriptionContent);
     createdProduct.append("attributes", JSON.stringify([{
       id: 0,

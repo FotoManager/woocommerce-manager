@@ -51,8 +51,7 @@ const Measures: React.FC<{
 }> = ({ measures, updateMeasures, selectMeasure }) => {
   const [id, setId] = useState("");
   const [editingMeasure, setEditingMeasure] = useState("");
-  const [newPrice, setNewPrice] = useState("");
-  const [newQuantity, setNewQuantity] = useState(0);
+  const [newValue, setNewValue] = useState("");
 
   const list = useRef(null);
 
@@ -72,10 +71,11 @@ const Measures: React.FC<{
   };
 
   const handleEditMeasure = (id) => {
+    
     setId(measures[id]);
     setEditingMeasure("true");
-    setNewQuantity(getQuantity(measures[id]));
-    setNewPrice(getPrice(measures[id]));
+    setNewValue(measures[id]);
+    
   };
 
   const handleSelectMeasure = (id) => {
@@ -84,24 +84,11 @@ const Measures: React.FC<{
 
   const handleCloseEditor = () => {
     setEditingMeasure(null);
-    setNewPrice(null);
-    setNewQuantity(null);
+    setNewValue(null);
   };
 
   const handleSave = () => {
-    let priceUpdated = "";
-    const price = newPrice.split(",");
-    const decimal = price[1] ? "," + price[1] : "";
-    //Each 3 digits of newPrice assign a . to the string
-    for (let i = 1; i <= price[0].length; i++) {
-      priceUpdated = price[0][price[0].length - i] + priceUpdated;
-      if (i % 3 === 0 && i !== price[0].length) {
-        priceUpdated = "." + priceUpdated;
-      }
-    }
-    const quantityMessage = newQuantity > 1 ? "Unidades" : "Unidad";
-
-    const measureUpdated = `$${priceUpdated}${decimal} (${newQuantity} ${quantityMessage})`;
+    const measureUpdated =  newValue;
     //console.log(measureUpdated);
     let updatedData = [];
 
@@ -178,18 +165,9 @@ const Measures: React.FC<{
             <div className={classes.modal_body}>
               <label className={classes.input}>
                 <input
-                  type="number"
-                  step={"0.1"}
-                  value={newPrice}
-                  onChange={(e) => setNewPrice(e.target.value)}
-                />
-              </label>
-              <label className={classes.input}>
-                <input
-                  type="number"
-                  min="1"
-                  value={newQuantity}
-                  onChange={(e) => setNewQuantity(parseInt(e.target.value))}
+                  type="text"
+                  value={newValue}
+                  onChange={(e) => setNewValue(e.target.value)}
                 />
               </label>
             </div>

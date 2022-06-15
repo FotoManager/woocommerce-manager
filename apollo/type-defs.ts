@@ -11,8 +11,7 @@ export const typeDefs = gql`
     username: String!
     password: String!
     name: String!
-    last_name: String!
-    email: String!
+    lastname: String!
   }
   input SignInInput {
     username: String!
