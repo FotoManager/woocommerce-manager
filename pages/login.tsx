@@ -98,6 +98,7 @@ export default function LogIn() {
       }
     } catch (error) {
       console.log("Sending data ", getErrorMessage(error) );
+      setLoading(false);
       setErrorMsg({ response: getErrorMessage(error) });
     }
   };
