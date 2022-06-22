@@ -119,7 +119,7 @@ const Product = ({ validCategories }) => {
     createdProduct.append("manage_stock", "true");
     createdProduct.append("description", descriptionContent);
     createdProduct.append("type", measures.length === 0 ? "simple" : "variable");
-    createdProduct.append8"tags", JSON.stringify(listTags));
+    createdProduct.append("tags", JSON.stringify(listTags));
 
     if(measures.length > 0){
       createdProduct.append(
