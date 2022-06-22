@@ -6,6 +6,7 @@ import { useRef, useState, Suspense, useEffect } from "react";
 import Add from "../../icons/add";
 import Category from "../../components/Editor/Category";
 import ModalCategories from "../../components/Editor/ModalCategories";
+import ModalTags from "../../components/Editor/ModalTags";
 import { deleteProduct, updateProduct } from "./../api/helpers/api";
 //import Variations from "../../components/Editor/Variations";
 import Measures from "../../components/Editor/Measures";
@@ -50,6 +51,7 @@ const Product = ({ product, validCategories }) => {
     on_sale,
     stock_quantity,
     description,
+    tags
   } = product;
 
   const { options } = attributes[0] || {};
@@ -60,6 +62,8 @@ const Product = ({ product, validCategories }) => {
   const [descriptionContent, setDescription] = useState(description);
   const [listCategories, setListCategories] = useState(categories);
   const [openCategories, setOpenCategories] = useState(false);
+  const [listTags, setListTags] = useState(tags);
+  const [openTags, setOpenTags] = useState(false);
   const [onSale, setOnSale] = useState(on_sale);
   const [measures, setMeasures] = useState(options);
   const imgUpload = useRef(null);
@@ -74,6 +78,16 @@ const Product = ({ product, validCategories }) => {
     oFReader.onload = function (oFREvent) {
       setImg(oFREvent.target.result as string);
     };
+  };
+
+  const addTag = (tag) => {
+    setListTags([...listTags, tag]);
+  };
+
+  const selectTag = () => setOpenTags(true);
+
+  const deleteTag = (tag) => () => {
+    setListTags(listTags.filter((cat) => cat.id !== tag));
   };
 
   const addCategory = (category) => {
@@ -96,6 +110,7 @@ const Product = ({ product, validCategories }) => {
     updatedProduct.append("id", id);
     updatedProduct.append("name", title);
     updatedProduct.append("categories", JSON.stringify(listCategories));
+    updatedProduct.append("tags", JSON.stringify(listTags));
     updatedProduct.append("regular_price", priceValue);
     updatedProduct.append("price", priceValue);
     updatedProduct.append("sale_price", priceValue);
@@ -204,6 +219,24 @@ const Product = ({ product, validCategories }) => {
               </div>
             </div>
 
+            <div className={classes.categories}>
+              <div className={classes.col_1}>Tags</div>
+              <div className={classes.col_2}>
+                <div className={classes.tags}>
+                  {listTags.map((tag) => (
+                    <Category
+                      key={tag.id}
+                      category={tag}
+                      deleteC={deleteTag(tag.id)}
+                    />
+                  ))}
+                </div>
+                <span className={classes.add} onClick={selectTag}>
+                  <Add />
+                </span>
+              </div>
+            </div>
+
             <div className={classes.price}>
               <div className={classes.col_1}>Precio</div>
               <div className={classes.col_2}>
@@ -283,6 +316,13 @@ const Product = ({ product, validCategories }) => {
             useCategories={validCategories}
           />
         )}
+        {openTags && (
+          <ModalTags
+            setTags={addTag}
+            closeModal={() => setOpenTags(false)}
+            tags={listTags}
+          />
+        )}
         {showSaveConfirmation && (
           <ModalConfirmation
             messageModal={"¿Estás seguro de actualizar este producto?"}
@@ -340,7 +380,7 @@ const Wrapper = ({ product, validCategories }) => {
         lastname={viewer.lastname}
         handleLogout={handleLogout}
       />
-      <Product validCategories={validCategories} product={product} />
+      <Product validCategories={validCategories} product={product}/>
     </>
   );
 };
@@ -368,7 +408,7 @@ export const getServerSideProps: GetStaticProps = async (context) => {
   return {
     props: {
       product: { found: product !== undefined, ...product },
-      validCategories,
+      validCategories
     },
   };
 };

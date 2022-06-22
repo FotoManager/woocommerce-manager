@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps } from "next";
-import classes from "./../../../styles/product.module.css";
+import classes from "./../../../styles/variation.module.css";
 import { useRef, useState, useEffect } from "react";
 import Add from "../../../icons/add";
 import Category from "../../../components/Editor/Category";
@@ -34,9 +34,10 @@ const SignOutMutation = gql`
 `;
 
 
-const Product = ({ validCategories, attributes }) => {
+const Product = ({ validCategories, props }) => {
   if (!validCategories) return <LoaderPage text={"Cargando"} />;
 
+  const { images, attributes } = props;
   const { options } = attributes[0] || {};
 
   const [priceValue, setPriceValue] = useState("");
@@ -48,7 +49,7 @@ const Product = ({ validCategories, attributes }) => {
   const [onSale, setOnSale] = useState(false);
   const [measures, setMeasures] = useState(options);
   const imgUpload = useRef(null);
-  const [img, setImg] = useState("");
+  const [img, setImg] = useState(images[0].src || "");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showErrors, setShowErrors] = useState(false);
@@ -276,7 +277,7 @@ const Product = ({ validCategories, attributes }) => {
   );
 };
 
-const Wrapper = ({ validCategories, attributes }) => {
+const Wrapper = ({ validCategories, props }) => {
   const { data, loading, error } = useQuery(ViewerQuery);
     const { viewer } = data || {};
     const shouldRedirect = !(loading || error || viewer);
@@ -310,7 +311,7 @@ const Wrapper = ({ validCategories, attributes }) => {
   return (
     <>
       <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
-      <Product validCategories={validCategories} attributes={attributes}/>
+      <Product validCategories={validCategories} props={props}/>
     </>
   );
 }
@@ -328,7 +329,7 @@ export const getServerSideProps: GetStaticProps = async (context) => {
     )
   ).json();
 
-  const attributes = await (
+  const props = await (
     await fetch(
       `${
         process.env.API_HOST ? process.env.API_HOST : "http://localhost:5000"
@@ -339,7 +340,7 @@ export const getServerSideProps: GetStaticProps = async (context) => {
   return {
     props: {
       validCategories,
-      attributes
+      props
     },
   };
 };

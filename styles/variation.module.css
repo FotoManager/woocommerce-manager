@@ -18,6 +18,8 @@
     flex-wrap: wrap;
     gap: 0;
     border:1px solid #0b1361;
+    flex-direction: column;
+    min-width: 600px;
 }
 
 .content > * {
@@ -86,32 +88,32 @@
 }
 
 .categories {
-    flex: 1 1 350px;
+    width: 100%;
     order: 3;
 }
 
 .price{
-    flex: 1 1 200px;
+    width: 100%;
     order: 4;
 }
 
 .sale{
-    flex: 1 1 50%;
+    width: 100%;
     order: 5;
 }
 
 .stock {
-    flex: 1 1 50%;
+    width: 100%;
     order: 6;
 }
 
 .sku{
-    flex: 1 1 30%;
+    width: 100%;
     order: 1;
 }
 
 .title{
-    flex: 1 1 70%;
+    width: 100%;
     order: 0;
 }
 
@@ -128,7 +130,7 @@
 }
 
 .measures, .variations, .description {
-    flex: 1 1 100%;
+    width: 100%;
 }
 
 .description {
@@ -202,10 +204,6 @@
     cursor: pointer;
 }
 
-.add svg{
-    height: 24px;
-}
-
 .categories .col_2{
     justify-content: space-between;
 }
@@ -258,6 +256,43 @@
     .sku{
         flex: 1 1 100%;
         order: 0;
+    }
+
+    .content{
+        flex-direction: row;
+        min-width: none;
+    }
+
+    .content > * {
+        width: auto;
+    }
+
+    .categories {
+        flex: 1 1 350px;
+    }
+    
+    .price{
+        flex: 1 1 200px;
+    }
+    
+    .sale{
+        flex: 1 1 50%;
+    }
+    
+    .stock {
+        flex: 1 1 50%;
+    }
+    
+    .sku{
+        flex: 1 1 30%;
+    }
+    
+    .title{
+        flex: 1 1 70%;
+    }
+
+    .measures, .variations, .description {
+        flex: 1 1 100%;
     }
 
 }

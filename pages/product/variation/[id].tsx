@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { GetStaticProps } from "next";
 import dynamic from 'next/dynamic'
-import classes from "./../../../styles/product.module.css";
+import classes from "./../../../styles/variation.module.css";
 import {  useState, useEffect, Fragment } from "react";
 import Add from "../../../icons/add";
 import Category from "../../../components/Editor/Category";
@@ -43,7 +43,7 @@ const Product = ({ product, validCategories, attributes }) => {
     price,
     on_sale,
     stock_quantity,
-    description,
+    description
   } = product;
   
   const { options } = attributes[0] || {};

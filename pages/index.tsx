@@ -3,11 +3,12 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState, useMemo } from "react";
-import { getAllProducts } from "./api/helpers/api";
+import { getProducts } from "./api/helpers/api";
 import Products from "../components/Products/Products";
 import Search from "../components/Search/Search";
 import LoaderPage from "../components/loader/LoaderPage";
-import useSWR, { SWRConfig } from "swr";
+import useSWRInfinite from 'swr/infinite'
+import { SWRConfig } from "swr";
 import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
 import Header from "../components/Header/Header";
@@ -29,44 +30,36 @@ const SignOutMutation = gql`
 `;
 
 const fetcher = async (url) => {
-  const productsPromises = await getAllProducts();
-  const data = (await Promise.all(productsPromises)).map( product => {
-      return JSON.parse(product.body);
-  } );
 
-  const products = data.reduce((acc, curr) => {
-    return acc.concat(curr);
-  }, []);
+  const response = await (await getProducts(url)).json();
+  const { body } = response;
+
+  const products = JSON.parse(body);
 
   return products;
 }
 
+const getKey = (pageIndex, previousPageData) => {
+  if (previousPageData && !previousPageData.length) return null 
+  return `${pageIndex + 1}`;
+}
+
 function Inventory({ perPage , actions }){
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const { data, error } = useSWR("/api/products/all", fetcher);
+  const { data, size, setSize, isValidating } = useSWRInfinite(getKey, fetcher);
   const { viewer, handleLogout } = actions;
 
-  const searchedProducts = useMemo(() => {
-    if(!data) return [];
-
-    if (search === "")
-      return [
-        ...data.slice(
-          (currentPage - 1) * perPage,
-          Math.min(data.length, perPage * currentPage)
-        ),
-      ];
-    return data.filter((product) => {
-      return (
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.id.toString().includes(search)
-      );
-    });
-  }, [data, search]);
-
   if (!data || data.length == 0) return <LoaderPage text="Cargando" />;
+
+  const isLoadingInitialData = !data;
+  const isLoadingMore =
+    isLoadingInitialData ||
+    (size > 0 && data && typeof data[size - 1] === "undefined");
+  const isEmpty = data?.[0]?.length === 0;
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.length < perPage);
+  const isRefreshing = isValidating && data && data.length === size;
 
   return (
     <div className={styles.container}>
@@ -77,7 +70,8 @@ function Inventory({ perPage , actions }){
       <main className={styles.main}>
         <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
         <Search updateSearch={(search) => setSearch(search)} />
-        <Products products={searchedProducts} />
+        <Products data={data} />
+        { !isReachingEnd && <button onClick={() => setSize(size + 1)} className={styles.button}>{ isLoadingMore ? "Cargando" : "Mostrar más" }</button> }
       </main>
 
       <footer className={styles.footer}>
@@ -131,50 +125,24 @@ export default function Home({ fallback, perPage }) {
 
   return ( 
     <SWRConfig value={{ fallback }}>
-      <Inventory perPage={perPage} actions={{ handleLogout, viewer }}/>
+      <Inventory perPage={perPage} actions={{ handleLogout, viewer }} />
     </SWRConfig>)
 }
 
-// export const getServerSideProps = async () => {
-//   const productsPromises = await getAllProducts();
-//   const data = (await Promise.all(productsPromises)).map( product => {
-//       return JSON.parse(product.body);
-//   } );
-
-//   const products = data.reduce((acc, curr) => {
-//     return acc.concat(curr);
-//   }, []);
-
-//   const maxSize = products.length;
-//   const perPage = 12;
-
-//   return {
-//     props: {
-//       data: products,
-//       maxSize,
-//       perPage,
-//     },
-//   };
-// };
-
 export const getStaticProps = async () => {
-  const productsPromises = await getAllProducts();
-  const data = (await Promise.all(productsPromises)).map( product => {
-      return JSON.parse(product.body);
-  } );
+  const response = await (await getProducts()).json();
+  const { body, headers } = response;
+  // const totalPages = headers["x-wp-totalpages"];
 
-  const products = data.reduce((acc, curr) => {
-    return acc.concat(curr);
-  }, []);
-
-  const perPage = 12;
+  const products = JSON.parse(body);
+  const perPage = 50;
 
   return {
     props: {
       fallback: {
         inventory: products,
       },
-      perPage,
+      perPage
     }
   };
 };

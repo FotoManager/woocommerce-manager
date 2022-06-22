@@ -1,9 +1,13 @@
 import Logout from "../../icons/logout";
+import Navbar from "../Navbar/Navbar";
 import styles from "./Header.module.css";
 
 const Header = ({ handleLogout, name, lastname }) => {
     return (
         <div className={styles.header}>
+          <div className={styles.navbar}>
+            <Navbar />
+          </div>
           <div className={styles.header_left}>
             Bienvenido, <span className={styles.username}>{name} {lastname}</span>
           </div>
