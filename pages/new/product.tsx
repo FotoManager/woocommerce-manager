@@ -17,6 +17,7 @@ import ModalConfirmation from "../../components/Confirmation/Confirmation";
 import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
 import Header from "../../components/Header/Header";
+import Head from "next/head";
 
 const ViewerQuery = gql`
   query ViewerQuery {
@@ -131,6 +132,10 @@ const Product = ({ validCategories }) => {
   return (
     <div className={classes.container}>
       <main className={classes.main}>
+        <Head>
+          <title>Crear producto nuevo | Tornicentro</title>
+        </Head>
+
         <div className={classes.product}>
           <div className={classes.image}>
             {img !== "" && <img src={img} alt={"Product Image"} />}

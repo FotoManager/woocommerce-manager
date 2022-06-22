@@ -15,6 +15,7 @@ import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
 import Header from "../../../components/Header/Header";
 import LoaderPage from "../../../components/loader/LoaderPage";
+import Head from "next/head";
 
 const ViewerQuery = gql`
   query ViewerQuery {
@@ -114,6 +115,9 @@ const Product = ({ product, validCategories, attributes }) => {
   return (
     <div className={classes.container}>
       <main className={classes.main}>
+        <Head>
+          <title> Variación {title} | Tornicentro</title>
+        </Head>
         <div className={classes.product}>
           <div className={classes.image}>
             <img src={images[0].src} alt={id} />

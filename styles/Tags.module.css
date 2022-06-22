@@ -79,6 +79,7 @@
     border: #0b1361 1px solid;
     max-height: 520px;
     overflow-y: scroll;
+    width: 100%;
   }
 
   .addTag{

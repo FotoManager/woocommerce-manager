@@ -16,6 +16,7 @@ import ModalConfirmation from "../../components/Confirmation/Confirmation";
 import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
 import Header from "../../components/Header/Header";
+import Head from "next/head";
 
 //Lazy import of Variations
 const Variations = dynamic(() => import("../../components/Editor/Variations"));
@@ -168,6 +169,9 @@ const Product = ({ product, validCategories }) => {
   return (
     <div className={classes.container}>
       <main className={classes.main}>
+        <Head>
+          <title> {title} | Tornicentro</title>
+        </Head>
         <div className={classes.product}>
           <div className={classes.image}>
             <img src={img} alt={id} />
