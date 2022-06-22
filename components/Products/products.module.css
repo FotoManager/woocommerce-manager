@@ -4,7 +4,14 @@
     grid-auto-rows: minmax(100px, auto);
     gap: 25px 25px;
     max-width: calc(100% - 8rem);
-    padding-bottom: 60px;
+}
+
+.noProducts{
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: calc(100% - 80px);
+    box-sizing: border-box;
 }
 
 @media (max-width: 1050px) {

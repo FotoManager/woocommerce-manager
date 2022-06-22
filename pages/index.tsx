@@ -44,12 +44,28 @@ const getKey = (pageIndex, previousPageData) => {
   return `${pageIndex + 1}`;
 }
 
-function Inventory({ perPage , actions }){
+function Inventory({ perPage , actions, totalPages }){
 
   const [search, setSearch] = useState("");
   const { data, size, setSize, isValidating } = useSWRInfinite(getKey, fetcher);
   const { viewer, handleLogout } = actions;
 
+  
+  const searchedProducts = useMemo(() => {
+    const products = data ? [].concat(...data) : [];
+    if(!data) return [];
+
+    if (search === "")
+      return products;
+      
+    return products.filter((product) => {
+      return (
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.id.toString().includes(search)
+        );
+      });
+    }, [data, search]);
+    
   if (!data || data.length == 0) return <LoaderPage text="Cargando" />;
 
   const isLoadingInitialData = !data;
@@ -70,7 +86,10 @@ function Inventory({ perPage , actions }){
       <main className={styles.main}>
         <Header  name={viewer.name} lastname={viewer.lastname} handleLogout={handleLogout} />
         <Search updateSearch={(search) => setSearch(search)} />
-        <Products data={data} />
+        <Products products={searchedProducts} />
+        <div className={styles.information}>
+          Páginas {size} de {totalPages}. Total de {searchedProducts.length} productos.
+        </div>
         { !isReachingEnd && <button onClick={() => setSize(size + 1)} className={styles.button}>{ isLoadingMore ? "Cargando" : "Mostrar más" }</button> }
       </main>
 
@@ -91,7 +110,7 @@ function Inventory({ perPage , actions }){
   
 }
 
-export default function Home({ fallback, perPage }) {
+export default function Home({ fallback, perPage, totalPages }) {
 
     const { data, loading, error } = useQuery(ViewerQuery);
     const { viewer } = data || {};
@@ -125,14 +144,14 @@ export default function Home({ fallback, perPage }) {
 
   return ( 
     <SWRConfig value={{ fallback }}>
-      <Inventory perPage={perPage} actions={{ handleLogout, viewer }} />
+      <Inventory perPage={perPage} actions={{ handleLogout, viewer }} totalPages={totalPages} />
     </SWRConfig>)
 }
 
 export const getStaticProps = async () => {
   const response = await (await getProducts()).json();
   const { body, headers } = response;
-  // const totalPages = headers["x-wp-totalpages"];
+  const totalPages = headers["x-wp-totalpages"];
 
   const products = JSON.parse(body);
   const perPage = 50;
@@ -142,7 +161,8 @@ export const getStaticProps = async () => {
       fallback: {
         inventory: products,
       },
-      perPage
+      perPage,
+      totalPages,
     }
   };
 };
