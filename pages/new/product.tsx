@@ -18,6 +18,7 @@ import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
 import Header from "../../components/Header/Header";
 import Head from "next/head";
+import ModalTags from "../../components/Editor/ModalTags";
 
 const ViewerQuery = gql`
   query ViewerQuery {
@@ -44,6 +45,8 @@ const Product = ({ validCategories }) => {
   const [descriptionContent, setDescription] = useState("");
   const [listCategories, setListCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState(false);
+  const [listTags, setListTags] = useState([]);
+  const [openTags, setOpenTags] = useState(false);
   const [onSale, setOnSale] = useState(false);
   const [measures, setMeasures] = useState([]);
   const imgUpload = useRef(null);
@@ -60,6 +63,16 @@ const Product = ({ validCategories }) => {
     oFReader.onload = function (oFREvent) {
       setImg(oFREvent.target.result as string);
     };
+  };
+
+  const addTag = (tag) => {
+    setListTags([...listTags, tag]);
+  };
+
+  const selectTag = () => setOpenTags(true);
+
+  const deleteTag = (tag) => () => {
+    setListTags(listTags.filter((cat) => cat.id !== tag));
   };
 
   const addCategory = (category) => {
@@ -106,6 +119,7 @@ const Product = ({ validCategories }) => {
     createdProduct.append("manage_stock", "true");
     createdProduct.append("description", descriptionContent);
     createdProduct.append("type", measures.length === 0 ? "simple" : "variable");
+    createdProduct.append8"tags", JSON.stringify(listTags));
 
     if(measures.length > 0){
       createdProduct.append(
@@ -203,6 +217,24 @@ const Product = ({ validCategories }) => {
               </div>
             </div>
 
+            <div className={classes.categories}>
+              <div className={classes.col_1}>Tags</div>
+              <div className={classes.col_2}>
+                <div className={classes.tags}>
+                  {listTags.map((tag) => (
+                    <Category
+                      key={tag.id}
+                      category={tag}
+                      deleteC={deleteTag(tag.id)}
+                    />
+                  ))}
+                </div>
+                <span className={classes.add} onClick={selectTag}>
+                  <Add />
+                </span>
+              </div>
+            </div>
+
             <div className={classes.price}>
               <div className={classes.col_1}>Precio</div>
               <div className={classes.col_2}>
@@ -266,6 +298,14 @@ const Product = ({ validCategories }) => {
           <ModalErrors
             closeModal={() => setShowErrors(false)}
             errors={errors}
+          />
+        )}
+
+        {openTags && (
+          <ModalTags
+            setTags={addTag}
+            closeModal={() => setOpenTags(false)}
+            tags={listTags}
           />
         )}
 
