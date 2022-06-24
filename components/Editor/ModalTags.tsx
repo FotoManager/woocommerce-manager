@@ -1,11 +1,11 @@
 import classes from "./modalTags.module.css";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { getTags } from "../../pages/api/helpers/api";
 import useSWRInfinite from "swr/infinite";
 
 const fetcher = async (url) => {
-  const response = await (await getTags(url)).json();
+  const response = await (await getTags(url.page, url.search)).json();
   const { body } = response;
 
   const tags = JSON.parse(body);
@@ -13,17 +13,19 @@ const fetcher = async (url) => {
   return tags;
 };
 
-const getKey = (pageIndex, previousPageData) => {
+const getKey = (search) => (pageIndex, previousPageData) => {
   if (previousPageData && !previousPageData.length) return null;
-  return `${pageIndex + 1}`;
+  return { page: pageIndex + 1, search};
 };
 
 const PER_PAGE = 20;
 
 const ModalTags = ({ tags, setTags, closeModal }) => {
+  const [filter, setFilter] = useState("")
+  const [search, setSearch] = useState("")
   const table = useRef(null);
   const { data, size, setSize, isValidating, mutate } = useSWRInfinite(
-    getKey,
+    getKey(search),
     fetcher
   );
 
@@ -59,6 +61,11 @@ const ModalTags = ({ tags, setTags, closeModal }) => {
     ? [...useTags.filter((tag) => !tags.includes(tag))]
     : [];
 
+  const handleFilter = () => {
+    setSearch(filter);
+    setFilter("");
+  }
+
   return (
     <div className={classes.modal} id="modal-tags">
       <span className={classes.backdrop} />
@@ -67,6 +74,16 @@ const ModalTags = ({ tags, setTags, closeModal }) => {
           <h2>Tags</h2>
         </div>
         <div className={classes.modal_body}>
+          <div className={classes.filter}>
+            <input
+              type="text"
+              placeholder="Buscar"
+              className={classes.input}
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
+            <button className={classes.action} onClick={handleFilter}>Buscar</button>
+          </div>
           <div className={classes.tags} ref={table}>
             {tagsList.map((tag) => {
               return (

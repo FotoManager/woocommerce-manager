@@ -28,6 +28,8 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    max-width: 90%;
+    box-sizing: border-box;
 }
 
 .tags {
@@ -87,4 +89,49 @@
     flex-direction: column;
     gap: 10px;
 
+}
+
+.tags::-webkit-scrollbar{
+    width: 10px;
+    height: 10px;
+    background: #f1f1f1;
+}
+
+.tags::-webkit-scrollbar-thumb{
+    background-color: #0b1361;
+}
+
+.tags::-webkit-scrollbar-thumb:hover{
+    background-color: #151e72;
+}
+
+.filter{
+    display: flex;
+    gap: 10px;
+}
+
+.input{
+    border: 1px solid #ccc;
+    padding: 10px;
+    outline: none;
+    width: 100%;
+}
+
+.action {
+    background: #0b1361;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.action:hover {
+    background: #151e72;
+}
+
+.modal_body{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 90%;
 }
