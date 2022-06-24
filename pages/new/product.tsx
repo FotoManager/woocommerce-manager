@@ -93,12 +93,7 @@ const Product = ({ validCategories }) => {
     const errors = {};
     if(!img) errors["img"] = "Debe seleccionar una imagen";
     if (!title) errors["title"] = "El titulo es requerido";
-    if (!priceValue){
-      const hasCategory = listCategories.find((cat) => cat.id === 83 || cat.id === 101);
-      if (hasCategory) errors["price"] = "Debe ingresar un precio.";
-    }
     if (!stock) errors["stock"] = "El stock es requerido";
-    if (!descriptionContent) errors["description"] = "La descripcion es requerida";
     if (!listCategories.length) errors["categories"] = "Las categorias son requeridas";
     if(!sku) errors["sku"] = "El sku es requerido";
 

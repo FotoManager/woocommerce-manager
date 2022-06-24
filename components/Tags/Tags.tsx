@@ -21,7 +21,8 @@ const Tags = ({ data, handleNewTag, handleDeleteTag, loadMore, isEnd, isLoadingM
         table.current.addEventListener("scroll", event, { passive: true });
 
         return () => {
-            table.current.removeEventListener("scroll", event);
+            if(table.current) 
+                table.current.removeEventListener("scroll", event);
         }
     }, [loadMore, table, isEnd]);
 

@@ -89,8 +89,6 @@ const Product = ({ validCategories, props }) => {
       if (hasCategory) errors["price"] = "Debe ingresar un precio.";
     }
     if (!stock) errors["stock"] = "El stock es requerido";
-    if (!descriptionContent) errors["description"] = "La descripcion es requerida";
-    if (!listCategories.length) errors["categories"] = "Las categorias son requeridas";
     if (!measures.length) errors["measures"] = "Las medidas son requeridas";
 
     setErrors(errors);
@@ -110,7 +108,7 @@ const Product = ({ validCategories, props }) => {
     createdProduct.append("regular_price", priceValue);
     createdProduct.append("on_stock", onSale.toString());
     createdProduct.append("stock_quantity", stock);
-    createdProduct.append("manage_stock", "parent");
+    createdProduct.append("manage_stock", "true");
     createdProduct.append("description", descriptionContent);
     createdProduct.append("attributes", JSON.stringify([{
       id: 0,
@@ -118,7 +116,7 @@ const Product = ({ validCategories, props }) => {
       option: measures[0] || "",
     }]));
 
-    if (img !== "") createdProduct.append("images", imgUpload.current.files[0]);
+    if (img !== "" && img != images[0].src) createdProduct.append("images", imgUpload.current.files[0]);
 
     setLoading(true);
 
