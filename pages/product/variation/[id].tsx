@@ -44,7 +44,8 @@ const Product = ({ product, validCategories, attributes }) => {
     price,
     on_sale,
     stock_quantity,
-    description
+    description,
+    sku:SKU
   } = product;
   
   const { options } = attributes[0] || {};
@@ -59,6 +60,7 @@ const Product = ({ product, validCategories, attributes }) => {
   const [measures, setMeasures] = useState(options);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sku, setSKU] = useState(SKU);
   
   const addCategory = (category) => {
     setListCategories([...listCategories, category]);
@@ -78,6 +80,7 @@ const Product = ({ product, validCategories, attributes }) => {
     setLoading(true);
     const updatedProduct = {
       id,
+      sku,
       name: title,
       categories: listCategories,
       attributes: [ { ...attributes[0], option: measures[0] || ""} ],
@@ -123,6 +126,18 @@ const Product = ({ product, validCategories, attributes }) => {
             <img src={images[0].src} alt={id} />
           </div>
           <div className={classes.content}>
+          <div className={classes.sku}>
+                <div className={classes.col_1}>SKU</div>
+                <div className={classes.col_2}>
+                  <input
+                    type="text"
+                    value={sku}
+                    name="sku"
+                    onChange={(event) => setSKU(event.target.value)}
+                  />
+                </div>
+            </div>
+
             <div className={classes.title}>
               <div className={classes.col_1}>Nombre de producto</div>
               <div className={classes.col_2}>

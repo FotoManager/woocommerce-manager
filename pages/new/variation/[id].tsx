@@ -55,6 +55,7 @@ const Product = ({ validCategories, props }) => {
   const [errors, setErrors] = useState({});
   const [showErrors, setShowErrors] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [sku, setSKU] = useState("");
 
   const router = useRouter();
 
@@ -103,6 +104,7 @@ const Product = ({ validCategories, props }) => {
     if(typeof parentId === "object")  parentId = parentId[0];
 
     const createdProduct = new FormData();
+    createdProduct.append("sku", sku);
     createdProduct.append("name", title);
     createdProduct.append("categories", JSON.stringify(listCategories));
     createdProduct.append("regular_price", priceValue);
@@ -164,6 +166,17 @@ const Product = ({ validCategories, props }) => {
             </label>
           </div>
           <div className={classes.content}>
+            <div className={classes.sku}>
+                <div className={classes.col_1}>SKU</div>
+                <div className={classes.col_2}>
+                  <input
+                    type="text"
+                    value={sku}
+                    name="sku"
+                    onChange={(event) => setSKU(event.target.value)}
+                  />
+                </div>
+            </div>
             <div className={classes.title}>
               <div className={classes.col_1}>Nombre de producto</div>
               <div className={classes.col_2}>
