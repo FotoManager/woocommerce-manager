@@ -50,7 +50,7 @@ const Product = ({ product, validCategories, attributes }) => {
   
   const { options } = attributes[0] || {};
 
-  const [priceValue, setPriceValue] = useState(price);
+  const [priceValue, setPriceValue] = useState(price || "0");
   const [title, setTitle] = useState(name);
   const [stock, setStock] = useState(stock_quantity);
   const [descriptionContent, setDescription] = useState(description);
