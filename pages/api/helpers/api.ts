@@ -5,14 +5,14 @@ export const getAllProducts = async () => {
     const promises: Promise<any>[] = [];
     for (let i = 1; i <= 3; i++) {
         promises.push(
-            (await fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST }/inventory/${i}`, { mode: 'no-cors' })).json()
+            (await fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST }/inventory/${i}`)).json()
         );
     }
     return promises;
 }
 
 export const getProducts = async ( page = 1, search = "") => {
-    return await fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST }/inventory?page=${page}&search=${search}`, {mode: 'no-cors'});
+    return await fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST }/inventory?page=${page}&search=${search}`);
 }
 
 export const updateProduct = (product: any, id:any) => {
