@@ -70,9 +70,9 @@ export const deleteTag = (id:any) => {
 }
 
 export const createTag = (tag:any) => {
+    console.log(tag);
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/tag/`, {
         method: 'POST',
-        mode: 'no-cors',
         body: JSON.stringify({ tag })
     });
 }
