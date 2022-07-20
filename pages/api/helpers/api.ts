@@ -18,7 +18,6 @@ export const getProducts = async ( page = 1, search = "") => {
 export const updateProduct = (product: any, id:any) => {
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/products/${id}`, {
         method: 'PUT',
-        mode: 'no-cors',
         body: product
     });
 }
@@ -42,12 +41,6 @@ export const createVariation = (product: any, parentId: string) => {
 export const updateVariation = (parentId:any, product: any) => {
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/products/${parentId}/variation/${product.id}`, {
         method: 'PUT',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-            //cors
-            'Access-Control-Allow-Origin': '*',
-        },
         body: JSON.stringify({ product })
     });
 }
