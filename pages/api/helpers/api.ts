@@ -73,11 +73,6 @@ export const createTag = (tag:any) => {
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/tag/`, {
         method: 'POST',
         mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-            //cors
-            'Access-Control-Allow-Origin': '*',
-        },
         body: JSON.stringify({ tag })
     });
 }
