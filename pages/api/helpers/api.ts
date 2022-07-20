@@ -72,6 +72,6 @@ export const deleteTag = (id:any) => {
 export const createTag = (tag:any) => {
     return fetch(`${process.env.API_HOST ? process.env.API_HOST : ROUTES.API_HOST}/tag/`, {
         method: 'POST',
-        body: { tag } as any
+        body: tag
     });
 }

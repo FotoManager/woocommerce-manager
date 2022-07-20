@@ -57,7 +57,9 @@ function Tags({ actions }) {
   };
 
   const handleNewTag = (newTag) => {
-    createTag(newTag).then((res) => {
+    const createdTag = new FormData();
+    createdTag.append("name", newTag);
+    createTag(createdTag).then((res) => {
       mutate();
     });
   };
